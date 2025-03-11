@@ -229,16 +229,19 @@ class _FormFillScreenState extends State<FormFillScreen> {
             tooltip: 'Preview document',
             onPressed: () {
               if (_formKey.currentState?.saveAndValidate() ?? false) {
-                // Get form data
                 final formData =
                     Map<String, dynamic>.from(_formKey.currentState!.value);
 
-                // Navigate to the FormPreviewScreen
+                final mappedFormData = <String, dynamic>{};
+                for (var field in widget.template.fields) {
+                  mappedFormData[field.label] = formData[field.id];
+                }
+
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FormPreviewScreen(
                       template: widget.template,
-                      formData: formData,
+                      formData: mappedFormData,
                     ),
                   ),
                 );

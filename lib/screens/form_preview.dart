@@ -271,14 +271,19 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                             children: [
                               _buildInfoRow('नाम', 'Name: ',
                                   widget.formData['Name'] ?? '', ttf),
+                              pw.SizedBox(height: 3),
                               _buildInfoRow('पिता/पति का नाम', 'F/S Name: ',
                                   widget.formData['F/S Name'] ?? '', ttf),
+                              pw.SizedBox(height: 3),
                               _buildInfoRow('लिंग', 'Gender: ',
                                   widget.formData['Gender'] ?? '', ttf),
+                              pw.SizedBox(height: 3),
                               _buildInfoRow('मिलने को', 'To Meet: ',
                                   widget.formData['To Meet'] ?? '', ttf),
+                              pw.SizedBox(height: 3),
                               _buildInfoRow('अधिकारी का नाम', 'Officer Name: ',
                                   widget.formData['Officer Name'] ?? '', ttf),
+                              pw.SizedBox(height: 3),
                               _buildInfoRow(
                                   'अनुमोदन अधिकारी',
                                   'Approving Officer: ',
@@ -298,8 +303,10 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                             children: [
                               _buildInfoRow('पता', 'Address: ',
                                   widget.formData['Address'] ?? '', ttf),
+                              pw.SizedBox(height: 3),
                               _buildInfoRow('मोबाइल नंबर', 'Mobile No.: ',
                                   widget.formData['Mobile No.'] ?? '', ttf),
+                              pw.SizedBox(height: 3),
                               _buildInfoRow('पहचान विवरण', 'ID Details: ',
                                   widget.formData['ID Details'] ?? '', ttf),
                             ],
@@ -367,79 +374,96 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                       pw.SizedBox(height: 10),
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: pw.CrossAxisAlignment.end,
                         children: [
-                          pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.center,
-                            children: [
-                              pw.Container(
-                                width: 150,
-                                height: 1,
-                                color: PdfColors.black,
-                              ),
-                              pw.SizedBox(height: 5),
-                              pw.Text('Signature, Officer Visited',
-                                  style: pw.TextStyle(font: ttf, fontSize: 8)),
-                              pw.Text('अधिकारी के हस्ताक्षर',
-                                  style: pw.TextStyle(font: ttf, fontSize: 8)),
-                            ],
-                          ),
-                          pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.center,
-                            children: [
-                              pw.Container(
-                                width: 150,
-                                height: 40,
-                                child: pw.Center(
-                                  child: widget.formData['Valid Date'] != null
-                                      ? pw.Text(
-                                          '${widget.formData['Valid Date']}',
-                                          style: pw.TextStyle(
-                                              font: ttf,
-                                              fontSize: 14,
-                                              fontWeight: pw.FontWeight.bold))
-                                      : pw.Text(
-                                          '${regDate.day}/${regDate.month}/${regDate.year}',
-                                          style: pw.TextStyle(
-                                              font: ttf,
-                                              fontSize: 14,
-                                              fontWeight: pw.FontWeight.bold)),
+                          pw.Expanded(
+                            child: pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.center,
+                              children: [
+                                pw.Container(
+                                  width: double.infinity,
+                                  height: 1,
+                                  color: PdfColors.black,
                                 ),
-                              ),
-                              pw.Text('Valid Date',
-                                  style: pw.TextStyle(font: ttf, fontSize: 8)),
-                              pw.Text('वैध तिथि',
-                                  style: pw.TextStyle(font: ttf, fontSize: 8)),
-                            ],
+                                pw.SizedBox(height: 5),
+                                pw.Text('Signature, Officer Visited',
+                                    style:
+                                        pw.TextStyle(font: ttf, fontSize: 8)),
+                                pw.Text('अधिकारी के हस्ताक्षर',
+                                    style:
+                                        pw.TextStyle(font: ttf, fontSize: 8)),
+                              ],
+                            ),
                           ),
-                          pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.center,
-                            children: [
-                              pw.Container(
-                                width: 150,
-                                height: 40,
-                                decoration: pw.BoxDecoration(
-                                  border: pw.Border.all(color: PdfColors.white),
-                                ),
-                                child: pw.Transform.rotate(
-                                  angle: 0.2,
+                          pw.Expanded(
+                            child: pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.center,
+                              children: [
+                                pw.Container(
+                                  width: double.infinity,
+                                  height: 40,
                                   child: pw.Center(
-                                    child: pw.Container(
-                                      height: 1,
-                                      width: 100,
-                                      color: PdfColors.blue,
+                                    child: widget.formData['Valid Date'] != null
+                                        ? pw.Text(
+                                            '${widget.formData['Valid Date']}',
+                                            style: pw.TextStyle(
+                                                font: ttf,
+                                                fontSize: 14,
+                                                fontWeight: pw.FontWeight.bold))
+                                        : pw.Text(
+                                            '${regDate.day}/${regDate.month}/${regDate.year}',
+                                            style: pw.TextStyle(
+                                                font: ttf,
+                                                fontSize: 14,
+                                                fontWeight:
+                                                    pw.FontWeight.bold)),
+                                  ),
+                                ),
+                                pw.Text('Valid Date',
+                                    style:
+                                        pw.TextStyle(font: ttf, fontSize: 8)),
+                                pw.Text('वैध तिथि',
+                                    style:
+                                        pw.TextStyle(font: ttf, fontSize: 8)),
+                              ],
+                            ),
+                          ),
+                          pw.Expanded(
+                            child: pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.center,
+                              children: [
+                                pw.Container(
+                                  width: double.infinity,
+                                  height: 40,
+                                  decoration: pw.BoxDecoration(
+                                    border:
+                                        pw.Border.all(color: PdfColors.white),
+                                  ),
+                                  child: pw.Transform.rotate(
+                                    angle: 0.2,
+                                    child: pw.Center(
+                                      child: pw.Container(
+                                        height: 1,
+                                        width: 100,
+                                        color: PdfColors.blue,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              pw.Text('Sr. Reception/ Reception Officer',
-                                  style: pw.TextStyle(font: ttf, fontSize: 8)),
-                              pw.Text('वरिष्ठ स्वागत/ स्वागत अधिकारी',
-                                  style: pw.TextStyle(font: ttf, fontSize: 8)),
-                              pw.Text('(Arvind Kumar)',
-                                  style: pw.TextStyle(font: ttf, fontSize: 8)),
-                              pw.Text('Reception, Block No. 12 CGO',
-                                  style: pw.TextStyle(font: ttf, fontSize: 6)),
-                            ],
+                                pw.Text('Sr. Reception/ Reception Officer',
+                                    style:
+                                        pw.TextStyle(font: ttf, fontSize: 8)),
+                                pw.Text('वरिष्ठ स्वागत/ स्वागत अधिकारी',
+                                    style:
+                                        pw.TextStyle(font: ttf, fontSize: 8)),
+                                pw.Text('(Arvind Kumar)',
+                                    style:
+                                        pw.TextStyle(font: ttf, fontSize: 8)),
+                                pw.Text('Reception, Block No. 12 CGO',
+                                    style:
+                                        pw.TextStyle(font: ttf, fontSize: 6)),
+                              ],
+                            ),
                           ),
                         ],
                       ),
