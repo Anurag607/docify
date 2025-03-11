@@ -20,7 +20,7 @@ class DatabaseService {
   }
 
   Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'document_generator.db');
+    String path = join(await getDatabasesPath(), 'docify.db');
     return await openDatabase(
       path,
       version: 1,

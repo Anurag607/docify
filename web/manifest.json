@@ -1,6 +1,6 @@
 {
-    "name": "document_generator",
-    "short_name": "document_generator",
+    "name": "docify",
+    "short_name": "docify",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

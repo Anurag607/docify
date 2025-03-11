@@ -1,4 +1,4 @@
-# document_generator
+# docify
 
 A new Flutter project.
 
