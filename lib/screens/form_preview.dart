@@ -1,13 +1,13 @@
+import 'dart:io';
+import 'package:docify/services/compress_img.dart';
+import 'package:pdf/pdf.dart';
+import '../models/template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'dart:convert';
-import 'dart:io';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import '../models/template.dart';
 
 class FormPreviewScreen extends StatefulWidget {
   final Template template;
@@ -61,15 +61,12 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
     }
 
     // Create visitor photo placeholder or use actual image if available
-    pw.MemoryImage? visitorPhoto;
-    if (widget.formData['Visitor Photo'] != null) {
-      try {
-        final bytes = base64Decode(widget.formData['Visitor Photo']);
-        visitorPhoto = pw.MemoryImage(bytes);
-      } catch (e) {
-        print('Error loading visitor photo: $e');
-      }
-    }
+    print('Visitor Photo: ${widget.formData['Visitor Photo']}');
+    pw.MemoryImage? visitorPhoto = await compressImageForPdf(
+        widget.formData['Visitor Photo'],
+        maxSizeBytes: 500000 // 500KB limit
+        );
+    print('Visitor photo loaded and compressed successfully.');
 
     final regDate = DateTime.now();
     final endHour = (regDate.hour + 3) % 24; // Ensure hour does not exceed 23
@@ -644,4 +641,46 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
       ),
     );
   }
+}
+
+Future<pw.MemoryImage?> safeLoadImage(String? path,
+    {int maxSizeBytes = 500000}) async {
+  if (path == null) return null;
+
+  try {
+    final imageFile = File(path);
+    if (await imageFile.exists()) {
+      final bytes = await imageFile.readAsBytes();
+      print('Image size: ${bytes.length} bytes');
+
+      // If the image is within the size limit, use it directly
+      if (bytes.length <= maxSizeBytes) {
+        return pw.MemoryImage(bytes);
+      }
+
+      // Try to compress the image
+      // final compressedBytes =
+      //     await compressImageToBytes(path, maxSizeBytes: maxSizeBytes);
+
+      // if (compressedBytes != null) {
+      //   print('Compressed image size: ${compressedBytes.length} bytes');
+      //   print(
+      //       'Compression ratio: ${(bytes.length / compressedBytes.length).toStringAsFixed(2)}x');
+      //   return pw.MemoryImage(compressedBytes);
+      // }
+
+      // If compression fails, use a placeholder
+      print('Compression failed, using placeholder image');
+      final placeholder =
+          await rootBundle.load('assets/images/photo_placeholder.jpg');
+      return pw.MemoryImage(placeholder.buffer.asUint8List());
+    } else {
+      print('Image file does not exist: $path');
+    }
+  } catch (e) {
+    print('Error loading image: $e');
+  }
+
+  // If all else fails, return null
+  return null;
 }

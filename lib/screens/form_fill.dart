@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
@@ -26,17 +25,17 @@ class _FormFillScreenState extends State<FormFillScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   XFile? _pickedImage;
 
-  Future<void> captureVisitorPhoto() async {
+  Future captureVisitorPhoto() async {
     final File? imageFile = await ImagePickerService.pickImage(context);
 
     if (imageFile != null) {
-      final bytes = await imageFile.readAsBytes();
-      final base64Image = base64Encode(bytes);
-
+      final imagePath = imageFile.path;
       setState(() {
-        _formKey.currentState!.value['Visitor Photo'] = base64Image;
-        _pickedImage = XFile(imageFile.path);
+        _pickedImage = XFile(imagePath);
       });
+      print('Image captured: $imagePath');
+    } else {
+      print('No image captured.');
     }
   }
 
@@ -241,7 +240,7 @@ class _FormFillScreenState extends State<FormFillScreen> {
     if (_pickedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Please capture the required image'),
+          content: const Text('Please capture the required image1'),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
@@ -281,7 +280,7 @@ class _FormFillScreenState extends State<FormFillScreen> {
               if (_pickedImage == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: const Text('Please capture the required image'),
+                    content: const Text('Please capture the required image2'),
                     backgroundColor: Theme.of(context).colorScheme.error,
                   ),
                 );
@@ -291,15 +290,14 @@ class _FormFillScreenState extends State<FormFillScreen> {
               if (_formKey.currentState?.saveAndValidate() ?? false) {
                 final formData =
                     Map<String, dynamic>.from(_formKey.currentState!.value);
-
-                final bytes = File(_pickedImage!.path).readAsBytesSync();
-                final base64Image = base64Encode(bytes);
-                formData['Visitor Photo'] = base64Image;
+                formData['Visitor Photo'] = _pickedImage!.path;
 
                 final mappedFormData = <String, dynamic>{};
                 for (var field in widget.template.fields) {
                   mappedFormData[field.label] = formData[field.id];
                 }
+
+                mappedFormData['Visitor Photo'] = _pickedImage!.path;
 
                 Navigator.of(context).push(
                   MaterialPageRoute(
