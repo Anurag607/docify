@@ -62,9 +62,9 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
 
     // Create visitor photo placeholder or use actual image if available
     pw.MemoryImage? visitorPhoto;
-    if (widget.formData['photo'] != null) {
+    if (widget.formData['Visitor Photo'] != null) {
       try {
-        final bytes = base64Decode(widget.formData['photo']);
+        final bytes = base64Decode(widget.formData['Visitor Photo']);
         visitorPhoto = pw.MemoryImage(bytes);
       } catch (e) {
         print('Error loading visitor photo: $e');

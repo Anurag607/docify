@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:camera/camera.dart';
+import 'package:docify/services/capture_image.dart';
 import 'package:docify/screens/form_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -19,6 +24,21 @@ class FormFillScreen extends StatefulWidget {
 
 class _FormFillScreenState extends State<FormFillScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
+  XFile? _pickedImage;
+
+  Future<void> captureVisitorPhoto() async {
+    final File? imageFile = await ImagePickerService.pickImage(context);
+
+    if (imageFile != null) {
+      final bytes = await imageFile.readAsBytes();
+      final base64Image = base64Encode(bytes);
+
+      setState(() {
+        _formKey.currentState!.value['Visitor Photo'] = base64Image;
+        _pickedImage = XFile(imageFile.path);
+      });
+    }
+  }
 
   IconData _getFieldIcon(String fieldType) {
     switch (fieldType) {
@@ -50,19 +70,15 @@ class _FormFillScreenState extends State<FormFillScreen> {
     }
   }
 
-  Widget _buildFormField(FormFieldModel field) {
-    // Create a floating label style InputDecoration
+  Widget _buildFormField(BuildContext context, FormFieldModel field) {
     final decoration = InputDecoration(
-      labelText: field.label, // This will be your floating label
+      labelText: field.label,
       floatingLabelBehavior: FloatingLabelBehavior.auto,
-      // Optional: You can still keep an icon if desired
       prefixIcon: Icon(
         _getFieldIcon(field.type),
         color: Theme.of(context).colorScheme.primary,
       ),
-      // Add a border to make the field more defined
       border: OutlineInputBorder(),
-      // Optional: Style the focused border
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(
           color: Theme.of(context).colorScheme.primary,
@@ -100,6 +116,24 @@ class _FormFillScreenState extends State<FormFillScreen> {
                   errorText: '${field.label} must be a number'),
           initialValue: field.defaultValue,
         );
+      case 'image':
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              field.label,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            _pickedImage == null
+                ? ElevatedButton.icon(
+                    icon: Icon(Icons.camera_alt),
+                    label: Text('Capture Image'),
+                    onPressed: captureVisitorPhoto,
+                  )
+                : Image.file(File(_pickedImage!.path), height: 150),
+          ],
+        );
       // Other cases remain the same with the updated decoration
       default:
         return FormBuilderTextField(
@@ -122,7 +156,8 @@ class _FormFillScreenState extends State<FormFillScreen> {
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
-        build: (context) {
+        build: (pw.Context pwContext) {
+          // Changed from context to pwContext
           return pw.Padding(
             padding: const pw.EdgeInsets.all(40.0),
             child: pw.Column(
@@ -202,7 +237,17 @@ class _FormFillScreenState extends State<FormFillScreen> {
   }
 
   Future<void> _handlePdfAction(
-      Future<void> Function(pw.Document) action) async {
+      BuildContext context, Future<void> Function(pw.Document) action) async {
+    if (_pickedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please capture the required image'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      return;
+    }
+
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final pdf = await _generatePdf();
       if (!mounted) return;
@@ -225,12 +270,31 @@ class _FormFillScreenState extends State<FormFillScreen> {
         title: Text(widget.template.name),
         actions: [
           IconButton(
+            icon: const Icon(Icons.camera_alt),
+            tooltip: 'Capture Photo',
+            onPressed: captureVisitorPhoto,
+          ),
+          IconButton(
             icon: const Icon(Icons.preview_outlined),
             tooltip: 'Preview document',
             onPressed: () {
+              if (_pickedImage == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Please capture the required image'),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                  ),
+                );
+                return;
+              }
+
               if (_formKey.currentState?.saveAndValidate() ?? false) {
                 final formData =
                     Map<String, dynamic>.from(_formKey.currentState!.value);
+
+                final bytes = File(_pickedImage!.path).readAsBytesSync();
+                final base64Image = base64Encode(bytes);
+                formData['Visitor Photo'] = base64Image;
 
                 final mappedFormData = <String, dynamic>{};
                 for (var field in widget.template.fields) {
@@ -258,7 +322,7 @@ class _FormFillScreenState extends State<FormFillScreen> {
           IconButton(
             icon: const Icon(Icons.download_outlined),
             tooltip: 'Download as PDF',
-            onPressed: () => _handlePdfAction((pdf) async {
+            onPressed: () => _handlePdfAction(context, (pdf) async {
               await Printing.sharePdf(
                 bytes: await pdf.save(),
                 filename:
@@ -269,7 +333,7 @@ class _FormFillScreenState extends State<FormFillScreen> {
           IconButton(
             icon: const Icon(Icons.print_outlined),
             tooltip: 'Print document',
-            onPressed: () => _handlePdfAction((pdf) async {
+            onPressed: () => _handlePdfAction(context, (pdf) async {
               final printer = await Printing.pickPrinter(context: context);
               if (printer != null) {
                 await Printing.directPrintPdf(
@@ -290,7 +354,7 @@ class _FormFillScreenState extends State<FormFillScreen> {
               children: widget.template.fields.map((field) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
-                  child: _buildFormField(field),
+                  child: _buildFormField(context, field),
                 );
               }).toList(),
             ),

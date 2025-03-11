@@ -96,6 +96,7 @@ class DatabaseService {
       },
       {'label': 'Valid Duration', 'type': 'datetime_range', 'required': true},
       {'label': 'Reg Date', 'type': 'date', 'required': true},
+      {'label': 'Visitor Photo', 'type': 'image', 'required': true},
     ];
 
     // Insert each field
