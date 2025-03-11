@@ -269,19 +269,19 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                           child: pw.Column(
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
-                              _buildInfoRow('नाम', 'Name',
+                              _buildInfoRow('नाम', 'Name: ',
                                   widget.formData['Name'] ?? '', ttf),
-                              _buildInfoRow('पिता/पति का नाम', 'F/S Name',
+                              _buildInfoRow('पिता/पति का नाम', 'F/S Name: ',
                                   widget.formData['F/S Name'] ?? '', ttf),
-                              _buildInfoRow('लिंग', 'Gender',
+                              _buildInfoRow('लिंग', 'Gender: ',
                                   widget.formData['Gender'] ?? '', ttf),
-                              _buildInfoRow('मिलने को', 'To Meet',
+                              _buildInfoRow('मिलने को', 'To Meet: ',
                                   widget.formData['To Meet'] ?? '', ttf),
-                              _buildInfoRow('अधिकारी का नाम', 'Officer Name',
+                              _buildInfoRow('अधिकारी का नाम', 'Officer Name: ',
                                   widget.formData['Officer Name'] ?? '', ttf),
                               _buildInfoRow(
                                   'अनुमोदन अधिकारी',
-                                  'Approving Officer',
+                                  'Approving Officer: ',
                                   widget.formData['Approving Officer'] ?? '',
                                   ttf),
                             ],
@@ -296,11 +296,11 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                           child: pw.Column(
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
-                              _buildInfoRow('पता', 'Address',
+                              _buildInfoRow('पता', 'Address: ',
                                   widget.formData['Address'] ?? '', ttf),
-                              _buildInfoRow('मोबाइल नंबर', 'Mobile No.',
+                              _buildInfoRow('मोबाइल नंबर', 'Mobile No.: ',
                                   widget.formData['Mobile No.'] ?? '', ttf),
-                              _buildInfoRow('पहचान विवरण', 'ID Details',
+                              _buildInfoRow('पहचान विवरण', 'ID Details: ',
                                   widget.formData['ID Details'] ?? '', ttf),
                             ],
                           ),
@@ -344,31 +344,23 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                       pw.Row(
                         children: [
                           pw.Expanded(
-                              child: _buildInfoRow('पता', 'Address',
-                                  widget.formData['Address'] ?? '', ttf)),
-                        ],
-                      ),
-                      pw.SizedBox(height: 5),
-                      pw.Row(
-                        children: [
-                          pw.Expanded(
-                              child: _buildInfoRow('गैजेट', 'Gadgets',
+                              child: _buildInfoRow('गैजेट', 'Gadgets: ',
                                   widget.formData['Gadgets'] ?? '', ttf)),
                         ],
                       ),
-                      pw.SizedBox(height: 5),
+                      pw.SizedBox(height: 3),
                       pw.Row(
                         children: [
                           pw.Expanded(
-                              child: _buildInfoRow('उद्देश्य', 'Purpose',
+                              child: _buildInfoRow('उद्देश्य', 'Purpose: ',
                                   widget.formData['Purpose'] ?? '', ttf)),
                         ],
                       ),
-                      pw.SizedBox(height: 5),
+                      pw.SizedBox(height: 3),
                       pw.Row(
                         children: [
                           pw.Expanded(
-                              child: _buildInfoRow('टिप्पणी', 'Remark',
+                              child: _buildInfoRow('टिप्पणी', 'Remark: ',
                                   widget.formData['Remark'] ?? '', ttf)),
                         ],
                       ),
@@ -454,6 +446,8 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                     ],
                   ),
                 ),
+
+                pw.Expanded(child: pw.Container()), // Fill remaining space
 
                 // Instructions
                 pw.Container(
