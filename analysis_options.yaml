@@ -12,6 +12,7 @@ analyzer:
     deprecated_member_use: ignore
     avoid_print: ignore
     sized_box_for_whitespace: ignore
+    use_build_context_synchronously: ignore
 include: package:flutter_lints/flutter.yaml
 
 linter:

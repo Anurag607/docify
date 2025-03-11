@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 import '../models/template.dart';
 import '../models/form_field.dart';
 
@@ -24,7 +25,10 @@ class DatabaseService {
     return await openDatabase(
       path,
       version: 1,
-      onCreate: _createDatabase,
+      onCreate: (db, version) async {
+        await _createDatabase(db, version);
+        await _insertDefaultTemplate(db);
+      },
     );
   }
 
@@ -54,39 +58,76 @@ class DatabaseService {
     ''');
   }
 
-  Future<String> saveTemplate(Template template) async {
-    final db = await database;
-    await db.transaction((txn) async {
-      await txn.insert(
-        'templates',
-        {
-          'id': template.id,
-          'name': template.name,
-          'description': template.description,
-          'created_at': template.createdAt.millisecondsSinceEpoch,
-          'updated_at': template.updatedAt.millisecondsSinceEpoch,
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+  Future<void> _insertDefaultTemplate(Database db) async {
+    final templateId = const Uuid().v4();
+    final now = DateTime.now();
 
-      for (var field in template.fields) {
-        await txn.insert(
-          'form_fields',
-          {
-            'id': field.id,
-            'template_id': template.id,
-            'label': field.label,
-            'type': field.type,
-            'required': field.required ? 1 : 0,
-            'default_value': field.defaultValue,
-            'order_index': field.order,
-            'validation_rules': field.validationRules?.toString(),
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      }
-    });
-    return template.id;
+    // Insert template
+    await db.insert(
+      'templates',
+      {
+        'id': templateId,
+        'name': 'Daily Visitor Pass',
+        'description': 'Template for daily visitor pass',
+        'created_at': now.millisecondsSinceEpoch,
+        'updated_at': now.millisecondsSinceEpoch,
+      },
+    );
+
+    // Field definitions based on the official pass
+    final fieldDefinitions = [
+      {'label': 'Reg No', 'type': 'text', 'required': true},
+      {'label': 'Name', 'type': 'text', 'required': true},
+      {'label': 'F/S Name', 'type': 'text', 'required': true},
+      {'label': 'Gender', 'type': 'dropdown', 'required': true},
+      {'label': 'To Meet', 'type': 'text', 'required': true},
+      {'label': 'Officer Name', 'type': 'text', 'required': true},
+      {'label': 'Approving Officer', 'type': 'text', 'required': true},
+      {'label': 'Address', 'type': 'text', 'required': true},
+      {'label': 'Mobile No.', 'type': 'phone', 'required': true},
+      {'label': 'ID Details', 'type': 'text', 'required': true},
+      {'label': 'Gadgets', 'type': 'text', 'required': false},
+      {'label': 'Purpose', 'type': 'text', 'required': true},
+      {'label': 'Remark', 'type': 'text', 'required': false},
+      {
+        'label': 'Signature, Officer Visited',
+        'type': 'signature',
+        'required': true
+      },
+      {'label': 'Valid Duration', 'type': 'datetime_range', 'required': true},
+      {'label': 'Reg Date', 'type': 'date', 'required': true},
+    ];
+
+    // Insert each field
+    for (int i = 0; i < fieldDefinitions.length; i++) {
+      final field = fieldDefinitions[i];
+      await db.insert(
+        'form_fields',
+        {
+          'id': const Uuid().v4(),
+          'template_id': templateId,
+          'label': field['label'],
+          'type': field['type'],
+          'required': field['required'] == true ? 1 : 0,
+          'default_value': '',
+          'order_index': i,
+          'validation_rules': null,
+        },
+      );
+    }
+
+    print('Default template inserted with ID: $templateId');
+  }
+
+  Future<void> ensureDefaultTemplate() async {
+    final db = await database;
+    final count = Sqflite.firstIntValue(
+        await db.rawQuery('SELECT COUNT(*) FROM templates'));
+
+    if (count == 0) {
+      await _insertDefaultTemplate(db);
+      print('Inserted default template because no templates existed');
+    }
   }
 
   Future<List<Template>> getAllTemplates() async {
@@ -127,6 +168,41 @@ class DatabaseService {
             DateTime.fromMillisecondsSinceEpoch(templateMap['updated_at']),
       );
     }));
+  }
+
+  Future<String> saveTemplate(Template template) async {
+    final db = await database;
+    await db.transaction((txn) async {
+      await txn.insert(
+        'templates',
+        {
+          'id': template.id,
+          'name': template.name,
+          'description': template.description,
+          'created_at': template.createdAt.millisecondsSinceEpoch,
+          'updated_at': template.updatedAt.millisecondsSinceEpoch,
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      for (var field in template.fields) {
+        await txn.insert(
+          'form_fields',
+          {
+            'id': field.id,
+            'template_id': template.id,
+            'label': field.label,
+            'type': field.type,
+            'required': field.required ? 1 : 0,
+            'default_value': field.defaultValue,
+            'order_index': field.order,
+            'validation_rules': field.validationRules?.toString(),
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    });
+    return template.id;
   }
 
   Future<Template?> getTemplate(String id) async {

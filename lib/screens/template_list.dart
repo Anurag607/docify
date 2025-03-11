@@ -44,10 +44,18 @@ class _TemplateListState extends State<TemplateList> {
   }
 
   Future<void> _loadTemplates() async {
-    final templates = await _databaseService.getAllTemplates();
-    setState(() {
-      _templates = templates;
-    });
+    try {
+      final templates = await _databaseService.getAllTemplates();
+      print('Loaded ${templates.length} templates');
+
+      if (mounted) {
+        setState(() {
+          _templates = templates;
+        });
+      }
+    } catch (e) {
+      print('Error loading templates: $e');
+    }
   }
 
   @override

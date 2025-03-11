@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'screens/template_list.dart';
+import 'services/database_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final dbService = DatabaseService();
+  await dbService.ensureDefaultTemplate();
   runApp(const MyApp());
 }
 

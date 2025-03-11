@@ -1,3 +1,4 @@
+import 'package:docify/screens/form_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -50,11 +51,23 @@ class _FormFillScreenState extends State<FormFillScreen> {
   }
 
   Widget _buildFormField(FormFieldModel field) {
+    // Create a floating label style InputDecoration
     final decoration = InputDecoration(
-      hintText: 'Enter ${field.label.toLowerCase()}',
+      labelText: field.label, // This will be your floating label
+      floatingLabelBehavior: FloatingLabelBehavior.auto,
+      // Optional: You can still keep an icon if desired
       prefixIcon: Icon(
         _getFieldIcon(field.type),
         color: Theme.of(context).colorScheme.primary,
+      ),
+      // Add a border to make the field more defined
+      border: OutlineInputBorder(),
+      // Optional: Style the focused border
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.primary,
+          width: 2.0,
+        ),
       ),
     );
 
@@ -87,7 +100,7 @@ class _FormFillScreenState extends State<FormFillScreen> {
                   errorText: '${field.label} must be a number'),
           initialValue: field.defaultValue,
         );
-      // ... rest of the cases remain the same
+      // Other cases remain the same with the updated decoration
       default:
         return FormBuilderTextField(
           name: field.id,
@@ -214,9 +227,30 @@ class _FormFillScreenState extends State<FormFillScreen> {
           IconButton(
             icon: const Icon(Icons.preview_outlined),
             tooltip: 'Preview document',
-            onPressed: () => _handlePdfAction((pdf) async {
-              await Printing.layoutPdf(onLayout: (format) => pdf.save());
-            }),
+            onPressed: () {
+              if (_formKey.currentState?.saveAndValidate() ?? false) {
+                // Get form data
+                final formData =
+                    Map<String, dynamic>.from(_formKey.currentState!.value);
+
+                // Navigate to the FormPreviewScreen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => FormPreviewScreen(
+                      template: widget.template,
+                      formData: formData,
+                    ),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Please fill in all required fields'),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                  ),
+                );
+              }
+            },
           ),
           IconButton(
             icon: const Icon(Icons.download_outlined),
