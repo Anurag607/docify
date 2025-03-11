@@ -98,7 +98,7 @@ Future<pw.MemoryImage?> compressImageForPdf(String? imagePath,
     // Return as MemoryImage for PDF
     return pw.MemoryImage(compressedBytes);
   } catch (e) {
-    print('Error compressing image: $e');
+    print('Error compressing image (pdf): $e');
     return null;
   }
 }
@@ -114,6 +114,8 @@ Future<Uint8List?> compressImageToBytes(String? imagePath,
       return null;
     }
 
+    print('Compressing image to $maxSizeBytes bytes: $imagePath');
+
     // Read the original image bytes
     final bytes = await imageFile.readAsBytes();
 
@@ -122,12 +124,22 @@ Future<Uint8List?> compressImageToBytes(String? imagePath,
       return bytes;
     }
 
+    print('Original image size: ${bytes.length} bytes');
+
     // Decode the image
-    final originalImage = img.decodeImage(bytes);
-    if (originalImage == null) {
-      print('Failed to decode image');
+    late img.Image? originalImage;
+    try {
+      originalImage = img.decodeImage(bytes);
+      if (originalImage == null) {
+        print('Failed to decode image');
+        return null;
+      }
+    } catch (e) {
+      print('Error decoding image: $e');
       return null;
     }
+
+    print('Decoded image: ${originalImage.width}x${originalImage.height}');
 
     // Calculate dimensions for the resized image
     // Start with 80% quality and gradually reduce if needed
@@ -185,7 +197,7 @@ Future<Uint8List?> compressImageToBytes(String? imagePath,
     // Return the compressed bytes
     return compressedBytes;
   } catch (e) {
-    print('Error compressing image: $e');
+    print('Error compressing image (bytes): $e');
     return null;
   }
 }

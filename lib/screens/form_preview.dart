@@ -62,11 +62,13 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
 
     // Create visitor photo placeholder or use actual image if available
     print('Visitor Photo: ${widget.formData['Visitor Photo']}');
-    pw.MemoryImage? visitorPhoto = await compressImageForPdf(
-        widget.formData['Visitor Photo'],
-        maxSizeBytes: 500000 // 500KB limit
-        );
-    print('Visitor photo loaded and compressed successfully.');
+    pw.MemoryImage? visitorPhoto =
+        await safeLoadImage(widget.formData['Visitor Photo']);
+    if (visitorPhoto == null) {
+      print('No visitor photo found, using default placeholder.');
+    } else {
+      print('Visitor photo loaded and compressed successfully.');
+    }
 
     final regDate = DateTime.now();
     final endHour = (regDate.hour + 3) % 24; // Ensure hour does not exceed 23
@@ -659,15 +661,15 @@ Future<pw.MemoryImage?> safeLoadImage(String? path,
       }
 
       // Try to compress the image
-      // final compressedBytes =
-      //     await compressImageToBytes(path, maxSizeBytes: maxSizeBytes);
+      final compressedBytes =
+          await compressImageToBytes(path, maxSizeBytes: maxSizeBytes);
 
-      // if (compressedBytes != null) {
-      //   print('Compressed image size: ${compressedBytes.length} bytes');
-      //   print(
-      //       'Compression ratio: ${(bytes.length / compressedBytes.length).toStringAsFixed(2)}x');
-      //   return pw.MemoryImage(compressedBytes);
-      // }
+      if (compressedBytes != null) {
+        print('Compressed image size: ${compressedBytes.length} bytes');
+        print(
+            'Compression ratio: ${(bytes.length / compressedBytes.length).toStringAsFixed(2)}x');
+        return pw.MemoryImage(compressedBytes);
+      }
 
       // If compression fails, use a placeholder
       print('Compression failed, using placeholder image');
