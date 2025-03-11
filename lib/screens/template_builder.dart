@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../models/template.dart';
 import '../models/form_field.dart';
 import '../services/database_service.dart';
@@ -180,6 +182,43 @@ class _TemplateBuilderState extends State<TemplateBuilder> {
     }
   }
 
+  Future<void> _uploadImage() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        allowMultiple: false,
+        withData: true, // Make sure we get the file bytes
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+
+        if (file.bytes != null) {
+          setState(() {
+            _imageData = base64Encode(file.bytes!);
+            print(
+                'Template file data set successfully: ${file.bytes!.length} bytes'); // Debug log
+          });
+        } else {
+          throw Exception('Could not read file bytes');
+        }
+      }
+    } catch (e, stackTrace) {
+      print('Error picking file: $e'); // Debug log
+      print('Stack trace: $stackTrace'); // Debug log
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to upload template: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,54 +284,17 @@ class _TemplateBuilderState extends State<TemplateBuilder> {
                       maxLines: 3,
                     ),
                     const SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     Text(
-                      'Template Image',
+                      'Template File',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                     ),
                     const SizedBox(height: 16),
-                    if (_imageData != null)
-                      Stack(
-                        children: [
-                          Image.memory(
-                            base64Decode(_imageData!),
-                            height: 200,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  _imageData = null;
-                                });
-                              },
-                              icon: const Icon(Icons.delete_outline),
-                              style: IconButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.surface,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    else
-                      InkWell(
-                        onTap: () async {
-                          final picker = ImagePicker();
-                          final image = await picker.pickImage(
-                              source: ImageSource.gallery);
-                          if (image != null) {
-                            final bytes = await image.readAsBytes();
-                            setState(() {
-                              _imageData = base64Encode(bytes);
-                            });
-                          }
-                        },
-                        child: Container(
+                    Column(
+                      children: [
+                        Container(
                           height: 200,
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -302,25 +304,170 @@ class _TemplateBuilderState extends State<TemplateBuilder> {
                             ),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_photo_alternate_outlined,
-                                size: 48,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Upload Image',
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
+                          child: _imageData == null
+                              ? InkWell(
+                                  onTap: _uploadImage,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.upload_file_outlined,
+                                        size: 48,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Upload Template',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'PDF',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withOpacity(0.6),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        height: 200,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .outline,
+                                            width: 1,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: FutureBuilder<Uint8List>(
+                                          future: Future.value(
+                                              base64Decode(_imageData!)),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              return SfPdfViewer.memory(
+                                                snapshot.data!,
+                                                enableDoubleTapZooming: false,
+                                                pageSpacing: 0,
+                                                canShowPaginationDialog: false,
+                                                canShowScrollHead: false,
+                                                enableDocumentLinkAnnotation:
+                                                    false,
+                                                enableTextSelection: false,
+                                                onDocumentLoadFailed:
+                                                    (details) {
+                                                  print(
+                                                      'Error loading PDF: ${details.error}');
+                                                },
+                                              );
+                                            } else if (snapshot.hasError) {
+                                              return Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.error_outline,
+                                                      size: 48,
+                                                      color: Colors.red,
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Text(
+                                                      'Error loading PDF',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }
+                                            return const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _imageData = null;
+                                            });
+                                          },
+                                          icon:
+                                              const Icon(Icons.delete_outline),
+                                          style: IconButton.styleFrom(
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
                         ),
-                      ),
+                        if (_imageData != null) ...[
+                          const SizedBox(height: 8),
+                          InkWell(
+                            onTap: _uploadImage,
+                            child: Container(
+                              height: 40,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.outline,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.edit_document,
+                                    size: 20,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Replace Template',
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
               ),

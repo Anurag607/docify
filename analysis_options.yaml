@@ -10,6 +10,8 @@
 analyzer:
   errors:
     deprecated_member_use: ignore
+    avoid_print: ignore
+    sized_box_for_whitespace: ignore
 include: package:flutter_lints/flutter.yaml
 
 linter:

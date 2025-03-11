@@ -3,6 +3,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'screens/template_list.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -98,7 +99,8 @@ class MyApp extends StatelessWidget {
           ),
           filled: true,
           fillColor: const Color(0xFF2D2D2D),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           labelStyle: TextStyle(
             color: Colors.white.withOpacity(0.7),
             fontFamily: 'Kanit',
