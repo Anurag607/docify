@@ -6,16 +6,14 @@ import 'package:camera_macos/camera_macos.dart'
     if (dart.library.html) 'package:camera/camera.dart';
 
 class ImagePickerService {
-  /// Pick an image from the camera on supported platforms
-  /// Returns a File object with the captured image
   static Future<File?> pickImage(BuildContext context) async {
-    // Check which platform we're on
     if (Platform.isMacOS) {
+      print("capturing image in macos");
       return _pickImageMacOS(context);
     } else if (Platform.isWindows) {
+      print("capturing image in windows");
       return _pickImageWindows(context);
     } else {
-      // Unsupported platform
       _showErrorDialog(context, 'Platform not supported for camera capture');
       return null;
     }
@@ -24,12 +22,10 @@ class ImagePickerService {
   /// Pick image using camera_macos package on macOS
   static Future<File?> _pickImageMacOS(BuildContext context) async {
     try {
-      // Use the MacOSPhotoCaptureDialog we already have
       return await MacOSPhotoCaptureDialog.show(
         context,
-        resolution: PictureResolution.max,
-        format: PictureFormat.jpeg,
-        isVideoMirrored: true,
+        resolution: PictureResolution.low,
+        format: PictureFormat.jpg,
       );
     } catch (e) {
       _showErrorDialog(context, 'Error capturing image: $e');

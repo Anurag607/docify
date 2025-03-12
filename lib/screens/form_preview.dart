@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:docify/services/compress_img.dart';
 import 'package:pdf/pdf.dart';
 import '../models/template.dart';
 import 'package:flutter/material.dart';
@@ -326,12 +325,19 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                                   border: pw.Border.all(color: PdfColors.black),
                                 ),
                                 child: visitorPhoto != null
-                                    ? pw.Image(visitorPhoto,
-                                        fit: pw.BoxFit.cover)
+                                    ? pw.Image(
+                                        visitorPhoto,
+                                        fit: pw.BoxFit.cover,
+                                      )
                                     : pw.Center(
-                                        child: pw.Text('Photo',
-                                            style: pw.TextStyle(
-                                                font: ttf, fontSize: 8))),
+                                        child: pw.Text(
+                                          'Photo',
+                                          style: pw.TextStyle(
+                                            font: ttf,
+                                            fontSize: 8,
+                                          ),
+                                        ),
+                                      ),
                               ),
                               pw.SizedBox(height: 10),
                             ],
@@ -370,10 +376,10 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                                   widget.formData['Remark'] ?? '', ttf)),
                         ],
                       ),
-                      pw.SizedBox(height: 10),
+                      pw.SizedBox(height: 60),
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: pw.CrossAxisAlignment.end,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
                           pw.Expanded(
                             child: pw.Column(
@@ -395,60 +401,18 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                             ),
                           ),
                           pw.Expanded(
-                            child: pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.center,
-                              children: [
-                                pw.Container(
-                                  width: double.infinity,
-                                  height: 40,
-                                  child: pw.Center(
-                                    child: widget.formData['Valid Date'] != null
-                                        ? pw.Text(
-                                            '${widget.formData['Valid Date']}',
-                                            style: pw.TextStyle(
-                                                font: ttf,
-                                                fontSize: 14,
-                                                fontWeight: pw.FontWeight.bold))
-                                        : pw.Text(
-                                            '${regDate.day}/${regDate.month}/${regDate.year}',
-                                            style: pw.TextStyle(
-                                                font: ttf,
-                                                fontSize: 14,
-                                                fontWeight:
-                                                    pw.FontWeight.bold)),
-                                  ),
-                                ),
-                                pw.Text('Valid Date',
-                                    style:
-                                        pw.TextStyle(font: ttf, fontSize: 8)),
-                                pw.Text('वैध तिथि',
-                                    style:
-                                        pw.TextStyle(font: ttf, fontSize: 8)),
-                              ],
-                            ),
-                          ),
+                              child: pw.Container(
+                                  width: double.infinity, height: 40)),
                           pw.Expanded(
                             child: pw.Column(
                               crossAxisAlignment: pw.CrossAxisAlignment.center,
                               children: [
                                 pw.Container(
                                   width: double.infinity,
-                                  height: 40,
-                                  decoration: pw.BoxDecoration(
-                                    border:
-                                        pw.Border.all(color: PdfColors.white),
-                                  ),
-                                  child: pw.Transform.rotate(
-                                    angle: 0.2,
-                                    child: pw.Center(
-                                      child: pw.Container(
-                                        height: 1,
-                                        width: 100,
-                                        color: PdfColors.blue,
-                                      ),
-                                    ),
-                                  ),
+                                  height: 1,
+                                  color: PdfColors.black,
                                 ),
+                                pw.SizedBox(height: 5),
                                 pw.Text('Sr. Reception/ Reception Officer',
                                     style:
                                         pw.TextStyle(font: ttf, fontSize: 8)),
@@ -631,10 +595,9 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
           }
 
           return PdfPreview(
-            // The key change is here:
             build: (_) => Future.value(snapshot.data!),
-            allowPrinting: true,
-            allowSharing: true,
+            allowPrinting: false,
+            allowSharing: false,
             canChangeOrientation: false,
             canChangePageFormat: false,
             canDebug: false,
@@ -646,7 +609,7 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
 }
 
 Future<pw.MemoryImage?> safeLoadImage(String? path,
-    {int maxSizeBytes = 500000}) async {
+    {int maxSizeBytes = 50000}) async {
   if (path == null) return null;
 
   try {
@@ -655,23 +618,10 @@ Future<pw.MemoryImage?> safeLoadImage(String? path,
       final bytes = await imageFile.readAsBytes();
       print('Image size: ${bytes.length} bytes');
 
-      // If the image is within the size limit, use it directly
       if (bytes.length <= maxSizeBytes) {
         return pw.MemoryImage(bytes);
       }
 
-      // Try to compress the image
-      final compressedBytes =
-          await compressImageToBytes(path, maxSizeBytes: maxSizeBytes);
-
-      if (compressedBytes != null) {
-        print('Compressed image size: ${compressedBytes.length} bytes');
-        print(
-            'Compression ratio: ${(bytes.length / compressedBytes.length).toStringAsFixed(2)}x');
-        return pw.MemoryImage(compressedBytes);
-      }
-
-      // If compression fails, use a placeholder
       print('Compression failed, using placeholder image');
       final placeholder =
           await rootBundle.load('assets/images/photo_placeholder.jpg');
@@ -683,6 +633,5 @@ Future<pw.MemoryImage?> safeLoadImage(String? path,
     print('Error loading image: $e');
   }
 
-  // If all else fails, return null
   return null;
 }
