@@ -76,26 +76,16 @@ class DatabaseService {
 
     // Field definitions based on the official pass
     final fieldDefinitions = [
-      {'label': 'Reg No', 'type': 'text', 'required': true},
-      {'label': 'Name', 'type': 'text', 'required': true},
-      {'label': 'F/S Name', 'type': 'text', 'required': true},
-      {'label': 'Gender', 'type': 'dropdown', 'required': true},
-      {'label': 'To Meet', 'type': 'text', 'required': true},
-      {'label': 'Officer Name', 'type': 'text', 'required': true},
-      {'label': 'Approving Officer', 'type': 'text', 'required': true},
-      {'label': 'Address', 'type': 'text', 'required': true},
+      {'label': 'Name of visitor', 'type': 'text', 'required': true},
       {'label': 'Mobile No.', 'type': 'phone', 'required': true},
-      {'label': 'ID Details', 'type': 'text', 'required': true},
-      {'label': 'Gadgets', 'type': 'text', 'required': false},
+      {'label': 'Material carried in', 'type': 'text', 'required': false},
+      {'label': 'Officer Name', 'type': 'text', 'required': true},
+      {'label': 'PVC Details', 'type': 'text', 'required': false},
+      {'label': 'Address', 'type': 'text', 'required': true},
+      {'label': 'ID Details.', 'type': 'text', 'required': true},
       {'label': 'Purpose', 'type': 'text', 'required': true},
-      {'label': 'Remark', 'type': 'text', 'required': false},
-      {
-        'label': 'Signature, Officer Visited',
-        'type': 'signature',
-        'required': true
-      },
-      {'label': 'Valid Duration', 'type': 'datetime_range', 'required': true},
-      {'label': 'Reg Date', 'type': 'date', 'required': true},
+      {'label': 'Place to be visited', 'type': 'text', 'required': true},
+      {'label': 'Escorting staff', 'type': 'text', 'required': false},
       {'label': 'Visitor Photo', 'type': 'image', 'required': true},
     ];
 

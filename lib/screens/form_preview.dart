@@ -79,79 +79,90 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
         DateTime.now().millisecondsSinceEpoch.toString();
     final regNoSubstring = regNo.length > 15 ? regNo.substring(5, 15) : regNo;
 
+    const double inch = 72.0;
     pdf.addPage(
       pw.Page(
-        pageFormat: PdfPageFormat.a4,
+        pageFormat: PdfPageFormat(10 * inch, 6.0 * inch, marginAll: 0),
         build: (pw.Context context) {
           return pw.Container(
             decoration: pw.BoxDecoration(
               border: pw.Border.all(width: 1, color: PdfColors.black),
             ),
+            padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 8),
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.stretch,
               children: [
-                // Header
+                // Header section
                 pw.Container(
-                  color: PdfColors.lightBlue,
+                  color: PdfColors.grey300,
                   padding: const pw.EdgeInsets.symmetric(
-                      vertical: 10, horizontal: 20),
+                      vertical: 5, horizontal: 10),
                   child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
                       if (ministryLogo != null)
-                        pw.Image(ministryLogo, width: 50),
+                        pw.Image(ministryLogo, width: 40),
                       pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.center,
                         children: [
-                          pw.Text('गृह मंत्रालय • स्वागत संगठन',
-                              style: pw.TextStyle(
-                                  font: ttf,
-                                  fontSize: 12,
-                                  color: PdfColors.white)),
-                          pw.Text(
-                              'MINISTRY OF HOME AFFAIRS • RECEPTION ORGANISATION',
+                          pw.Text('भारत सरकार GOVERNMENT OF INDIA',
                               style: pw.TextStyle(
                                   font: ttf,
                                   fontSize: 10,
-                                  color: PdfColors.white)),
+                                  fontWeight: pw.FontWeight.bold)),
+                          pw.Text(
+                              'परमाणु ऊर्जा विभाग DEPARTMENT OF ATOMIC ENERGY',
+                              style: pw.TextStyle(
+                                  font: ttf,
+                                  fontSize: 9,
+                                  fontWeight: pw.FontWeight.bold)),
+                          pw.Text('परमाणु खनिज अन्वेषण एवं अनुसंधान निदेशालय',
+                              style: pw.TextStyle(
+                                  font: ttf,
+                                  fontSize: 8,
+                                  fontWeight: pw.FontWeight.bold)),
+                          pw.Text(
+                              'ATOMIC MINERALS DIRECTORATE FOR EXPLORATION & RESEARCH',
+                              style: pw.TextStyle(
+                                  font: ttf,
+                                  fontSize: 8,
+                                  fontWeight: pw.FontWeight.bold)),
+                          pw.Text('उत्तरी क्षेत्र NORTHERN REGION',
+                              style: pw.TextStyle(
+                                  font: ttf,
+                                  fontSize: 9,
+                                  fontWeight: pw.FontWeight.bold)),
                         ],
                       ),
-                      if (emblemLogo != null) pw.Image(emblemLogo, width: 30),
+                      if (emblemLogo != null) pw.Image(emblemLogo, width: 40),
                     ],
                   ),
                 ),
 
-                // Title & Block info
-                pw.Container(
-                  padding: const pw.EdgeInsets.symmetric(
-                      vertical: 10, horizontal: 20),
-                  margin: const pw.EdgeInsets.only(bottom: 10),
-                  child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.center,
+                // Title
+                pw.Padding(
+                  padding: const pw.EdgeInsets.symmetric(vertical: 5),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
                     children: [
-                      pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.center,
-                        children: [
-                          pw.Text('( Block No. 12 CGO )',
-                              style: pw.TextStyle(
-                                  font: ttf,
-                                  fontSize: 7,
-                                  fontWeight: pw.FontWeight.bold)),
-                          pw.Text('Daily Visitor Pass',
-                              style: pw.TextStyle(
-                                  font: ttf,
-                                  fontSize: 14,
-                                  fontWeight: pw.FontWeight.bold)),
-                        ],
-                      ),
+                      pw.Text('आकस्मिक प्रवेश पत्र',
+                          style: pw.TextStyle(
+                              font: ttf,
+                              fontSize: 11,
+                              fontWeight: pw.FontWeight.bold)),
+                      pw.Text('Casual Entry Permit',
+                          style: pw.TextStyle(
+                              font: ttf,
+                              fontSize: 12,
+                              fontWeight: pw.FontWeight.bold,
+                              decoration: pw.TextDecoration.underline)),
                     ],
                   ),
                 ),
 
                 // Valid Duration
                 pw.Container(
-                  padding: const pw.EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 5),
+                  padding: const pw.EdgeInsets.symmetric(vertical: 5),
                   child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -166,7 +177,7 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                                     fontSize: 8,
                                     fontWeight: pw.FontWeight.bold)),
                             pw.Text('Valid Duration: $validDuration',
-                                style: pw.TextStyle(font: ttf, fontSize: 10)),
+                                style: pw.TextStyle(font: ttf, fontSize: 8)),
                           ],
                         ),
                       ),
@@ -181,7 +192,10 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                                     fontWeight: pw.FontWeight.bold)),
                             pw.Text(
                                 'Printed On: ${regDate.day}/${regDate.month}/${regDate.year} ${regDate.hour}:${regDate.minute}',
-                                style: pw.TextStyle(font: ttf, fontSize: 8)),
+                                style: pw.TextStyle(
+                                    font: ttf,
+                                    fontSize: 8,
+                                    fontWeight: pw.FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -191,8 +205,7 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
 
                 // Reg Info
                 pw.Container(
-                  padding: const pw.EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 5),
+                  padding: const pw.EdgeInsets.symmetric(vertical: 5),
                   child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -207,7 +220,7 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                                     fontSize: 8,
                                     fontWeight: pw.FontWeight.bold)),
                             pw.Text('Reg No: $regNoSubstring',
-                                style: pw.TextStyle(font: ttf, fontSize: 10)),
+                                style: pw.TextStyle(font: ttf, fontSize: 8)),
                           ],
                         ),
                       ),
@@ -221,8 +234,8 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                                     fontSize: 8,
                                     fontWeight: pw.FontWeight.bold)),
                             pw.Text(
-                                'Reg Date: ${regDate.day}/${regDate.month}/${regDate.year}',
-                                style: pw.TextStyle(font: ttf, fontSize: 10)),
+                                'Registration Date: ${regDate.day}/${regDate.month}/${regDate.year}',
+                                style: pw.TextStyle(font: ttf, fontSize: 8)),
                           ],
                         ),
                       ),
@@ -230,253 +243,108 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                   ),
                 ),
 
-                // Title for visitor details
-                pw.Container(
-                  padding: const pw.EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 5),
-                  decoration: pw.BoxDecoration(
-                      border: pw.Border(
-                          bottom: pw.BorderSide(color: PdfColors.grey))),
-                  child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text('(आगंतुक विवरण)',
-                          style: pw.TextStyle(
-                              font: ttf,
-                              fontSize: 8,
-                              fontWeight: pw.FontWeight.bold)),
-                      pw.Text('Visitor Details',
-                          style: pw.TextStyle(
-                              font: ttf,
-                              fontSize: 12,
-                              fontWeight: pw.FontWeight.bold)),
-                    ],
-                  ),
-                ),
-
-                // Main information
-                pw.Container(
-                  child: pw.Row(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      // Left column with visitor info
-                      pw.Expanded(
-                        flex: 7,
-                        child: pw.Container(
-                          padding: const pw.EdgeInsets.all(10),
-                          child: pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: [
-                              _buildInfoRow('नाम', 'Name: ',
-                                  widget.formData['Name'] ?? '', ttf),
-                              pw.SizedBox(height: 3),
-                              _buildInfoRow('पिता/पति का नाम', 'F/S Name: ',
-                                  widget.formData['F/S Name'] ?? '', ttf),
-                              pw.SizedBox(height: 3),
-                              _buildInfoRow('लिंग', 'Gender: ',
-                                  widget.formData['Gender'] ?? '', ttf),
-                              pw.SizedBox(height: 3),
-                              _buildInfoRow('मिलने को', 'To Meet: ',
-                                  widget.formData['To Meet'] ?? '', ttf),
-                              pw.SizedBox(height: 3),
-                              _buildInfoRow('अधिकारी का नाम', 'Officer Name: ',
-                                  widget.formData['Officer Name'] ?? '', ttf),
-                              pw.SizedBox(height: 3),
-                              _buildInfoRow(
-                                  'अनुमोदन अधिकारी',
-                                  'Approving Officer: ',
-                                  widget.formData['Approving Officer'] ?? '',
-                                  ttf),
-                            ],
-                          ),
-                        ),
+                // Main information section
+                pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    // Visitor info
+                    pw.Expanded(
+                      flex: 6,
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          _buildInfoRow('नाम', 'Name of visitor:',
+                              widget.formData['Name of Visitor'] ?? '', ttf),
+                          _buildInfoRow('मोबाइल', 'Mobile No:',
+                              widget.formData['Mobile No.'] ?? '', ttf),
+                          _buildInfoRow(
+                              'सामग्री',
+                              'Material carried in:',
+                              widget.formData['Material carried in'] ?? '',
+                              ttf),
+                          _buildInfoRow(
+                              'अधिकारी',
+                              'Officer (Name) to be visited:',
+                              widget.formData['Officer Name'] ?? '',
+                              ttf),
+                          _buildInfoRow('पीवीसी विवरण', 'Details of PVC:',
+                              widget.formData['PVC Details'] ?? '', ttf),
+                        ],
                       ),
-                      // Right column with address and other info
-                      pw.Expanded(
-                        flex: 7,
-                        child: pw.Container(
-                          padding: const pw.EdgeInsets.all(10),
-                          child: pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: [
-                              _buildInfoRow('पता', 'Address: ',
-                                  widget.formData['Address'] ?? '', ttf),
-                              pw.SizedBox(height: 3),
-                              _buildInfoRow('मोबाइल नंबर', 'Mobile No.: ',
-                                  widget.formData['Mobile No.'] ?? '', ttf),
-                              pw.SizedBox(height: 3),
-                              _buildInfoRow('पहचान विवरण', 'ID Details: ',
-                                  widget.formData['ID Details'] ?? '', ttf),
-                            ],
-                          ),
-                        ),
+                    ),
+                    // Address & ID details
+                    pw.Expanded(
+                      flex: 6,
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          _buildInfoRow('पता', 'Address:',
+                              widget.formData['Address'] ?? '', ttf),
+                          _buildInfoRow('आईडी विवरण', 'ID No./Aadhar No:',
+                              widget.formData['ID Details'] ?? '', ttf),
+                          _buildInfoRow('उद्देश्य', 'Purpose of visit:',
+                              widget.formData['Purpose'] ?? '', ttf),
+                          _buildInfoRow('स्थान', 'Place to be visited:',
+                              widget.formData['Place'] ?? '', ttf),
+                          _buildInfoRow('स्टाफ', 'Escorting staff:',
+                              widget.formData['Escorting staff'] ?? '', ttf),
+                        ],
                       ),
-                      // Photo column
-                      pw.Expanded(
-                        flex: 3,
-                        child: pw.Container(
-                          padding: const pw.EdgeInsets.all(10),
-                          child: pw.Column(
-                            children: [
-                              pw.Container(
-                                width: 80,
-                                height: 100,
+                    ),
+                    // Photo column
+                    pw.Expanded(
+                      flex: 3,
+                      child: pw.Container(
+                        alignment: pw.Alignment.center,
+                        child: visitorPhoto != null
+                            ? pw.Image(visitorPhoto,
+                                width: 70, height: 90, fit: pw.BoxFit.cover)
+                            : pw.Container(
+                                width: 70,
+                                height: 90,
                                 decoration: pw.BoxDecoration(
-                                  border: pw.Border.all(color: PdfColors.black),
-                                ),
-                                child: visitorPhoto != null
-                                    ? pw.Image(
-                                        visitorPhoto,
-                                        fit: pw.BoxFit.cover,
-                                      )
-                                    : pw.Center(
-                                        child: pw.Text(
-                                          'Photo',
-                                          style: pw.TextStyle(
-                                            font: ttf,
-                                            fontSize: 8,
-                                          ),
-                                        ),
-                                      ),
+                                    border:
+                                        pw.Border.all(color: PdfColors.black)),
+                                alignment: pw.Alignment.center,
+                                child: pw.Text('Photo',
+                                    style:
+                                        pw.TextStyle(font: ttf, fontSize: 8)),
                               ),
-                              pw.SizedBox(height: 10),
-                            ],
-                          ),
-                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
 
-                // Additional info section
+                // Signature section
                 pw.Container(
                   padding: const pw.EdgeInsets.all(10),
                   child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    mainAxisAlignment: pw.MainAxisAlignment.start,
                     children: [
-                      pw.Row(
-                        children: [
-                          pw.Expanded(
-                              child: _buildInfoRow('गैजेट', 'Gadgets: ',
-                                  widget.formData['Gadgets'] ?? '', ttf)),
-                        ],
-                      ),
-                      pw.SizedBox(height: 3),
-                      pw.Row(
-                        children: [
-                          pw.Expanded(
-                              child: _buildInfoRow('उद्देश्य', 'Purpose: ',
-                                  widget.formData['Purpose'] ?? '', ttf)),
-                        ],
-                      ),
-                      pw.SizedBox(height: 3),
-                      pw.Row(
-                        children: [
-                          pw.Expanded(
-                              child: _buildInfoRow('टिप्पणी', 'Remark: ',
-                                  widget.formData['Remark'] ?? '', ttf)),
-                        ],
-                      ),
-                      pw.SizedBox(height: 60),
+                      pw.SizedBox(height: 20),
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          pw.Expanded(
-                            child: pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.center,
-                              children: [
-                                pw.Container(
-                                  width: double.infinity,
-                                  height: 1,
-                                  color: PdfColors.black,
-                                ),
-                                pw.SizedBox(height: 5),
-                                pw.Text('Signature, Officer Visited',
-                                    style:
-                                        pw.TextStyle(font: ttf, fontSize: 8)),
-                                pw.Text('अधिकारी के हस्ताक्षर',
-                                    style:
-                                        pw.TextStyle(font: ttf, fontSize: 8)),
-                              ],
-                            ),
+                          pw.SizedBox(
+                            height: 50,
+                            child:
+                                _buildSignatureBox('Signature of the visitor'),
                           ),
-                          pw.Expanded(
-                              child: pw.Container(
-                                  width: double.infinity, height: 40)),
-                          pw.Expanded(
-                            child: pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.center,
-                              children: [
-                                pw.Container(
-                                  width: double.infinity,
-                                  height: 1,
-                                  color: PdfColors.black,
-                                ),
-                                pw.SizedBox(height: 5),
-                                pw.Text('Sr. Reception/ Reception Officer',
-                                    style:
-                                        pw.TextStyle(font: ttf, fontSize: 8)),
-                                pw.Text('वरिष्ठ स्वागत/ स्वागत अधिकारी',
-                                    style:
-                                        pw.TextStyle(font: ttf, fontSize: 8)),
-                                pw.Text('(Arvind Kumar)',
-                                    style:
-                                        pw.TextStyle(font: ttf, fontSize: 8)),
-                                pw.Text('Reception, Block No. 12 CGO',
-                                    style:
-                                        pw.TextStyle(font: ttf, fontSize: 6)),
-                              ],
-                            ),
-                          ),
+                          pw.SizedBox(
+                            height: 50,
+                            child:
+                                _buildSignatureBox("Duty ASO at Security C/R."),
+                          )
                         ],
                       ),
-                    ],
-                  ),
-                ),
-
-                pw.Expanded(child: pw.Container()), // Fill remaining space
-
-                // Instructions
-                pw.Container(
-                  color: PdfColors.lightBlue,
-                  padding: const pw.EdgeInsets.all(10),
-                  child: pw.Column(
-                    children: [
-                      pw.Text('INSTRUCTIONS/निशा निर्देश',
-                          style: pw.TextStyle(
-                              font: ttf,
-                              fontSize: 12,
-                              color: PdfColors.white,
-                              fontWeight: pw.FontWeight.bold),
-                          textAlign: pw.TextAlign.center),
-                      pw.SizedBox(height: 5),
-                      pw.Text(
-                        'VISITOR SHOULD NOT ROAM AROUND THE OFFICES IN THE GOVERNMENT BUILDING EXCEPT THE OFFICE TO BE VISITED AND HE/SHE MUST RETURN THE PASS TO SECURITY PERSONNEL AFTER THE VISIT.',
-                        style: pw.TextStyle(
-                            font: ttf, fontSize: 8, color: PdfColors.white),
-                        textAlign: pw.TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Footer
-                pw.Container(
-                  color: PdfColors.lightBlue,
-                  padding: const pw.EdgeInsets.symmetric(
-                      vertical: 5, horizontal: 20),
-                  child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                    children: [
-                      pw.Text('MINISTRY OF HOME AFFAIRS',
-                          style: pw.TextStyle(
-                              font: ttf, fontSize: 10, color: PdfColors.white)),
-                      pw.Text('•',
-                          style: pw.TextStyle(
-                              font: ttf, fontSize: 10, color: PdfColors.white)),
-                      pw.Text('RECEPTION ORGANISATION',
-                          style: pw.TextStyle(
-                              font: ttf, fontSize: 10, color: PdfColors.white)),
+                      pw.SizedBox(height: 10),
+                      pw.SizedBox(
+                        height: 50,
+                        child: _buildSignatureBox(
+                            'Signature of the officer visited with time'),
+                      )
                     ],
                   ),
                 ),
@@ -497,20 +365,15 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Text('($hindiLabel)',
-              style: pw.TextStyle(
-                  font: ttf, fontSize: 6, fontWeight: pw.FontWeight.bold)),
           pw.Row(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.SizedBox(
-                width: 100,
                 child: pw.Text(englishLabel,
                     style: pw.TextStyle(
-                        font: ttf,
-                        fontSize: 9,
-                        fontWeight: pw.FontWeight.normal)),
+                        fontSize: 8, fontWeight: pw.FontWeight.bold)),
               ),
+              pw.SizedBox(width: 5),
               pw.Expanded(
                 child:
                     pw.Text(value, style: pw.TextStyle(font: ttf, fontSize: 9)),
@@ -519,6 +382,21 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  pw.Widget _buildSignatureBox(String text) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.center,
+      children: [
+        pw.Text(
+          text,
+          style: pw.TextStyle(
+            fontSize: 10,
+            fontWeight: pw.FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 
@@ -609,7 +487,7 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
 }
 
 Future<pw.MemoryImage?> safeLoadImage(String? path,
-    {int maxSizeBytes = 50000}) async {
+    {int maxSizeBytes = 100000}) async {
   if (path == null) return null;
 
   try {

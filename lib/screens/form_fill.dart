@@ -116,22 +116,47 @@ class _FormFillScreenState extends State<FormFillScreen> {
           initialValue: field.defaultValue,
         );
       case 'image':
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              field.label,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            _pickedImage == null
-                ? ElevatedButton.icon(
-                    icon: Icon(Icons.camera_alt),
-                    label: Text('Capture Image'),
-                    onPressed: captureVisitorPhoto,
-                  )
-                : Image.file(File(_pickedImage!.path), height: 150),
-          ],
+        return Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF2D2D2D),
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: Colors.grey.shade800),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+          child: Row(
+            children: [
+              Icon(
+                Icons.camera_alt,
+                color: const Color(0xFFCDBBFC),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Visitor Photo',
+                style: TextStyle(
+                  color: Colors.grey.shade400,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              const Spacer(),
+              ElevatedButton.icon(
+                onPressed: captureVisitorPhoto,
+                icon: const Icon(Icons.camera_alt, color: Colors.white),
+                label: const Text(
+                  'Capture Image',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey.shade800,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 12.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       // Other cases remain the same with the updated decoration
       default:
@@ -268,11 +293,11 @@ class _FormFillScreenState extends State<FormFillScreen> {
       appBar: AppBar(
         title: Text(widget.template.name),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.camera_alt),
-            tooltip: 'Capture Photo',
-            onPressed: captureVisitorPhoto,
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.camera_alt),
+          //   tooltip: 'Capture Photo',
+          //   onPressed: captureVisitorPhoto,
+          // ),
           IconButton(
             icon: const Icon(Icons.preview_outlined),
             tooltip: 'Preview document',
