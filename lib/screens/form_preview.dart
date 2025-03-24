@@ -38,23 +38,22 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
     final pdf = pw.Document(theme: pw.ThemeData.withFont(base: ttf));
 
     // Load ministry logo if available
-    pw.MemoryImage? ministryLogo;
+    pw.MemoryImage? amdLogo;
     try {
       final ByteData data =
           await rootBundle.load('assets/images/ministry_logo.png');
       final Uint8List bytes = data.buffer.asUint8List();
-      ministryLogo = pw.MemoryImage(bytes);
+      amdLogo = pw.MemoryImage(bytes);
     } catch (e) {
       print('Error loading ministry logo: $e');
     }
 
     // Load emblem logo if available
-    pw.MemoryImage? emblemLogo;
+    pw.MemoryImage? anniversaryLogo;
     try {
-      final ByteData data =
-          await rootBundle.load('assets/images/emblem_logo.png');
+      final ByteData data = await rootBundle.load('assets/images/75_logo.png');
       final Uint8List bytes = data.buffer.asUint8List();
-      emblemLogo = pw.MemoryImage(bytes);
+      anniversaryLogo = pw.MemoryImage(bytes);
     } catch (e) {
       print('Error loading emblem logo: $e');
     }
@@ -100,8 +99,7 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                   child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      if (ministryLogo != null)
-                        pw.Image(ministryLogo, width: 40),
+                      if (amdLogo != null) pw.Image(amdLogo, width: 40),
                       pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.center,
                         children: [
@@ -134,7 +132,8 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                                   fontWeight: pw.FontWeight.bold)),
                         ],
                       ),
-                      if (emblemLogo != null) pw.Image(emblemLogo, width: 40),
+                      if (anniversaryLogo != null)
+                        pw.Image(anniversaryLogo, width: 40),
                     ],
                   ),
                 ),
