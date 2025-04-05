@@ -176,61 +176,64 @@ class _FormFillScreenState extends State<FormFillScreen> {
       appBar: AppBar(
         title: Text(widget.template.name),
         actions: [
-          ElevatedButton.icon(
-            icon: const Icon(Icons.preview_outlined, color: Colors.white),
-            label: const Text(
-              'Preview Document',
-              style: TextStyle(color: Colors.white),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.grey.shade800,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
+          Container(
+            margin: const EdgeInsets.only(right: 16.0),
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.preview_outlined, color: Colors.white),
+              label: const Text(
+                'Preview Document',
+                style: TextStyle(color: Colors.white),
               ),
-            ),
-            onPressed: () {
-              if (_pickedImage == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Please capture the required image2'),
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                  ),
-                );
-                return;
-              }
-
-              if (_formKey.currentState?.saveAndValidate() ?? false) {
-                final formData =
-                    Map<String, dynamic>.from(_formKey.currentState!.value);
-                formData['Visitor Photo'] = _pickedImage!.path;
-
-                final mappedFormData = <String, dynamic>{};
-                for (var field in widget.template.fields) {
-                  mappedFormData[field.label] = formData[field.id];
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey.shade800,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 12.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              onPressed: () {
+                if (_pickedImage == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Please capture the required image2'),
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                    ),
+                  );
+                  return;
                 }
 
-                mappedFormData['Visitor Photo'] = _pickedImage!.path;
+                if (_formKey.currentState?.saveAndValidate() ?? false) {
+                  final formData =
+                      Map<String, dynamic>.from(_formKey.currentState!.value);
+                  formData['Visitor Photo'] = _pickedImage!.path;
 
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => FormPreviewScreen(
-                      template: widget.template,
-                      formData: mappedFormData,
+                  final mappedFormData = <String, dynamic>{};
+                  for (var field in widget.template.fields) {
+                    mappedFormData[field.label] = formData[field.id];
+                  }
+
+                  mappedFormData['Visitor Photo'] = _pickedImage!.path;
+
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => FormPreviewScreen(
+                        template: widget.template,
+                        formData: mappedFormData,
+                      ),
                     ),
-                  ),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Please fill in all required fields'),
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                  ),
-                );
-              }
-            },
-          ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Please fill in all required fields'),
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                    ),
+                  );
+                }
+              },
+            ),
+          )
         ],
       ),
       body: SingleChildScrollView(

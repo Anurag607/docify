@@ -8,6 +8,34 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+Map<String, String> englishToHindiMapping = {
+  "GOVERNMENT OF INDIA": "GOVERNMENT OF INDIA",
+  "DEPARTMENT OF ATOMIC ENERGY": "DEPARTMENT OF ATOMIC ENERGY",
+  "ATOMIC MINERALS DIRECTORATE FOR EXPLORATION & RESEARCH":
+      "ATOMIC MINERALS DIRECTORATE FOR EXPLORATION & RESEARCH",
+  "NORTHERN REGION": "NORTHERN REGION",
+  "Casual Entry Permit": "Casual Entry Permit",
+  "Valid Duration": "Valid Duration",
+  "Printed On": "Printed On",
+  "Reg No": "Reg No",
+  "Registration Date": "Registration Date",
+};
+
+Map<String, String> getHindiImageFilenames() {
+  return {
+    "GOVERNMENT OF INDIA": "GOVERNMENT OF INDIA.png",
+    "DEPARTMENT OF ATOMIC ENERGY": "DEPARTMENT OF ATOMIC ENERGY.png",
+    "ATOMIC MINERALS DIRECTORATE FOR EXPLORATION & RESEARCH":
+        "ATOMIC MINERALS DIRECTORATE FOR EXPLORATION & RESEARCH.png",
+    "NORTHERN REGION": "NORTHERN REGION.png",
+    "Casual Entry Permit": "Casual Entry Permit.png",
+    "Valid Duration": "Valid Duration.png",
+    "Printed On": "Printed On.png",
+    "Reg No": "Reg No.png",
+    "Registration Date": "Registration Date.png",
+  };
+}
+
 class FormPreviewScreen extends StatefulWidget {
   final Template template;
   final Map<String, dynamic> formData;
@@ -31,11 +59,31 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
     _pdfFuture = _generatePdf();
   }
 
+  Future<Map<String, pw.MemoryImage>> loadHindiImages() async {
+    Map<String, pw.MemoryImage> hindiImages = {};
+    final filenameMapping = getHindiImageFilenames();
+
+    for (var entry in englishToHindiMapping.entries) {
+      try {
+        final filename = filenameMapping[entry.key];
+        if (filename != null) {
+          final ByteData data =
+              await rootBundle.load('assets/hindi_text/$filename');
+          final Uint8List bytes = data.buffer.asUint8List();
+          hindiImages[entry.key] = pw.MemoryImage(bytes);
+        }
+      } catch (e) {
+        print('Error loading Hindi image for ${entry.key}: $e');
+      }
+    }
+
+    return hindiImages;
+  }
+
   Future<Uint8List> _generatePdf() async {
     final pdf = pw.Document();
     final fontData = await rootBundle.load("assets/fonts/Mukta-Regular.ttf");
     final hindiFont = pw.Font.ttf(fontData);
-    // final hindiFont = await PdfGoogleFonts.notoSansDevanagariRegular();
 
     // Load amd logo if available
     pw.MemoryImage? amdLogo;
@@ -78,6 +126,8 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
         DateTime.now().millisecondsSinceEpoch.toString();
     final regNoSubstring = regNo.length > 15 ? regNo.substring(5, 15) : regNo;
 
+    final hindiImages = await loadHindiImages();
+
     const double inch = 72.0;
     pdf.addPage(
       pw.Page(
@@ -86,7 +136,6 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
           return pw.Container(
             decoration: pw.BoxDecoration(
               color: PdfColor.fromHex("#e8e8e8"),
-              // border: pw.Border.all(width: 1, color: PdfColors.black),
             ),
             padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 8),
             child: pw.Column(
@@ -100,41 +149,55 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                   child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      if (amdLogo != null) pw.Image(amdLogo, width: 40),
+                      if (amdLogo != null) pw.Image(amdLogo, width: 70),
                       pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.center,
                         children: [
-                          pw.Text('भारत सरकार GOVERNMENT OF INDIA',
-                              style: pw.TextStyle(
-                                  font: hindiFont,
-                                  fontSize: 10,
-                                  fontWeight: pw.FontWeight.bold)),
-                          pw.Text(
-                              'परमाणु ऊर्जा विभाग DEPARTMENT OF ATOMIC ENERGY',
-                              style: pw.TextStyle(
-                                  font: hindiFont,
-                                  fontSize: 9,
-                                  fontWeight: pw.FontWeight.bold)),
-                          pw.Text('परमाणु खनिज अन्वेषण एवं अनुसंधान निदेशालय',
-                              style: pw.TextStyle(
-                                  font: hindiFont,
-                                  fontSize: 8,
-                                  fontWeight: pw.FontWeight.bold)),
-                          pw.Text(
-                              'ATOMIC MINERALS DIRECTORATE FOR EXPLORATION & RESEARCH',
-                              style: pw.TextStyle(
-                                  font: hindiFont,
-                                  fontSize: 8,
-                                  fontWeight: pw.FontWeight.bold)),
-                          pw.Text('उत्तरी क्षेत्र NORTHERN REGION',
-                              style: pw.TextStyle(
-                                  font: hindiFont,
-                                  fontSize: 9,
-                                  fontWeight: pw.FontWeight.bold)),
+                          _buildHindiText(
+                            hindiImages["GOVERNMENT OF INDIA"],
+                            "GOVERNMENT OF INDIA",
+                            null,
+                            hindiFont,
+                            15,
+                            null,
+                          ),
+                          _buildHindiText(
+                            hindiImages[
+                                "ATOMIC MINERALS DIRECTORATE FOR EXPLORATION & RESEARCH"],
+                            null,
+                            null,
+                            hindiFont,
+                            15,
+                            null,
+                          ),
+                          _buildHindiText(
+                            null,
+                            "ATOMIC MINERALS DIRECTORATE FOR EXPLORATION & RESEARCH",
+                            null,
+                            hindiFont,
+                            15,
+                            null,
+                          ),
+                          _buildHindiText(
+                            hindiImages["DEPARTMENT OF ATOMIC ENERGY"],
+                            "DEPARTMENT OF ATOMIC ENERGY",
+                            null,
+                            hindiFont,
+                            15,
+                            null,
+                          ),
+                          _buildHindiText(
+                            hindiImages["NORTHERN REGION"],
+                            "NORTHERN REGION",
+                            null,
+                            hindiFont,
+                            15,
+                            null,
+                          ),
                         ],
                       ),
                       if (anniversaryLogo != null)
-                        pw.Image(anniversaryLogo, width: 40),
+                        pw.Image(anniversaryLogo, width: 60),
                     ],
                   ),
                 ),
@@ -145,17 +208,16 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.center,
                     children: [
-                      pw.Text('आकस्मिक प्रवेश पत्र',
-                          style: pw.TextStyle(
-                              font: hindiFont,
-                              fontSize: 11,
-                              fontWeight: pw.FontWeight.bold)),
-                      pw.Text('Casual Entry Permit',
-                          style: pw.TextStyle(
-                              font: hindiFont,
-                              fontSize: 12,
-                              fontWeight: pw.FontWeight.bold,
-                              decoration: pw.TextDecoration.underline)),
+                      pw.Image(hindiImages["Casual Entry Permit"]!, height: 15),
+                      pw.Text(
+                        'Casual Entry Permit',
+                        style: pw.TextStyle(
+                          font: hindiFont,
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold,
+                          decoration: pw.TextDecoration.underline,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -167,38 +229,21 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Container(
-                        child: pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text('(वैध अवधि)',
-                                style: pw.TextStyle(
-                                    font: hindiFont,
-                                    fontSize: 8,
-                                    fontWeight: pw.FontWeight.bold)),
-                            pw.Text('Valid Duration: $validDuration',
-                                style:
-                                    pw.TextStyle(font: hindiFont, fontSize: 8)),
-                          ],
-                        ),
+                      _buildHindiText(
+                        hindiImages["Valid Duration"],
+                        "Valid Duration",
+                        validDuration,
+                        hindiFont,
+                        10,
+                        200,
                       ),
-                      pw.Container(
-                        child: pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text('(मुद्रित)',
-                                style: pw.TextStyle(
-                                    font: hindiFont,
-                                    fontSize: 8,
-                                    fontWeight: pw.FontWeight.bold)),
-                            pw.Text(
-                                'Printed On: ${regDate.day}/${regDate.month}/${regDate.year} ${regDate.hour}:${regDate.minute}',
-                                style: pw.TextStyle(
-                                    font: hindiFont,
-                                    fontSize: 8,
-                                    fontWeight: pw.FontWeight.bold)),
-                          ],
-                        ),
+                      _buildHindiText(
+                        hindiImages["Printed On"],
+                        "Printed On",
+                        '${regDate.day}/${regDate.month}/${regDate.year} ${regDate.hour}:${regDate.minute}',
+                        hindiFont,
+                        10,
+                        100,
                       ),
                     ],
                   ),
@@ -211,36 +256,21 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Container(
-                        child: pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text('(पंजीकरण संख्या)',
-                                style: pw.TextStyle(
-                                    font: hindiFont,
-                                    fontSize: 8,
-                                    fontWeight: pw.FontWeight.bold)),
-                            pw.Text('Reg No: $regNoSubstring',
-                                style:
-                                    pw.TextStyle(font: hindiFont, fontSize: 8)),
-                          ],
-                        ),
+                      _buildHindiText(
+                        hindiImages["Reg No"],
+                        "Reg No",
+                        regNoSubstring,
+                        hindiFont,
+                        10,
+                        100,
                       ),
-                      pw.Container(
-                        child: pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text('(पंजीकरण तिथि)',
-                                style: pw.TextStyle(
-                                    font: hindiFont,
-                                    fontSize: 8,
-                                    fontWeight: pw.FontWeight.bold)),
-                            pw.Text(
-                                'Registration Date: ${regDate.day}/${regDate.month}/${regDate.year}',
-                                style:
-                                    pw.TextStyle(font: hindiFont, fontSize: 8)),
-                          ],
-                        ),
+                      _buildHindiText(
+                        hindiImages["Registration Date"],
+                        "Registration Date",
+                        '${regDate.day}/${regDate.month}/${regDate.year}',
+                        hindiFont,
+                        10,
+                        100,
                       ),
                     ],
                   ),
@@ -393,6 +423,111 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
     );
 
     return pdf.save();
+  }
+
+  pw.Widget _buildHindiText(dynamic hindiImage, String? englishLabel,
+      String? value, pw.Font font, double? height, double? width) {
+    return pw.Container(
+      padding: const pw.EdgeInsets.symmetric(vertical: 0),
+      child: value == null
+          ? pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              mainAxisAlignment: pw.MainAxisAlignment.center,
+              children: [
+                if (hindiImage != null)
+                  pw.Image(hindiImage, height: height ?? 15),
+                if (hindiImage != null) pw.SizedBox(width: 2),
+                if (englishLabel != null)
+                  pw.SizedBox(
+                    child: pw.Text(
+                      englishLabel,
+                      style: pw.TextStyle(
+                        font: font,
+                        color: PdfColors.black,
+                        fontSize: 12,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                if (englishLabel != null) pw.SizedBox(width: 5),
+                if (value != null)
+                  pw.Expanded(
+                    child: pw.Text(
+                      value,
+                      style: pw.TextStyle(font: font, fontSize: 9),
+                    ),
+                  ),
+              ],
+            )
+          : pw.Container(
+              width: width,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Row(
+                    children: [
+                      pw.Container(
+                        margin: const pw.EdgeInsets.only(left: 0),
+                        child: pw.Text(
+                          '(',
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            fontWeight: pw.FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      pw.Image(hindiImage, height: height ?? 10),
+                      pw.Container(
+                        margin: const pw.EdgeInsets.only(left: 0),
+                        child: pw.Text(
+                          ')',
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            fontWeight: pw.FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  pw.Row(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    mainAxisAlignment: pw.MainAxisAlignment.center,
+                    children: [
+                      pw.SizedBox(
+                        child: pw.Text(
+                          englishLabel!,
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            fontWeight: pw.FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      pw.Container(
+                        margin: const pw.EdgeInsets.only(left: 0, right: 2.5),
+                        child: pw.Text(
+                          ':',
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            fontWeight: pw.FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      pw.Expanded(
+                        child: pw.Text(
+                          value,
+                          style: pw.TextStyle(
+                            font: font,
+                            fontSize: 8,
+                            fontWeight: pw.FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+    );
   }
 
   pw.Widget _buildInfoRow(
