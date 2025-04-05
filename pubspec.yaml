@@ -81,6 +81,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/fonts/
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -89,14 +90,62 @@ flutter:
   # https://flutter.dev/to/asset-from-package
 
   fonts:
+    - family: MANGAL
+      fonts:
+        - asset: assets/fonts/MANGAL.ttf
+          weight: 400
+
+    - family: Devlys
+      fonts:
+        - asset: assets/fonts/Devlys.ttf
+          weight: 400
+
+    - family: Eczar
+      fonts:
+        - asset: assets/fonts/Eczar.ttf
+          weight: 400
+    
     - family: NotoSansDevanagari
       fonts:
         - asset: assets/fonts/NotoSansDevanagari-Regular.ttf
+          weight: 400
         - asset: assets/fonts/NotoSansDevanagari-Bold.ttf
           weight: 700
+
+    - family: Mukta
+      fonts:
+        - asset: assets/fonts/Mukta-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Mukta-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Mukta-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Mukta-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Mukta-Semibold.ttf
+          weight: 600
+        - asset: assets/fonts/Mukta-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Mukta-ExtraBold.ttf
+          weight: 800
+          
+    - family: Hind
+      fonts:
+        - asset: assets/fonts/Hind-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Hind-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Hind-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Hind-Semibold.ttf
+          weight: 600
+        - asset: assets/fonts/Hind-Bold.ttf
+          weight: 700
+
     - family: Kanit
       fonts:
         - asset: assets/fonts/Kanit-Regular.ttf
+          weight: 400
         - asset: assets/fonts/Kanit-Medium.ttf
           weight: 500
         - asset: assets/fonts/Kanit-SemiBold.ttf

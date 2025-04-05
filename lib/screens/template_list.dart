@@ -313,21 +313,24 @@ class _TemplateListState extends State<TemplateList> {
             ),
       floatingActionButton: _templates.isEmpty
           ? null
-          : FloatingActionButton.extended(
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TemplateBuilder(),
-                  ),
-                );
-                if (result != null) {
-                  _loadTemplates();
-                }
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('New Template'),
-            ),
+          : true
+              ? Container()
+              // ignore: dead_code
+              : FloatingActionButton.extended(
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TemplateBuilder(),
+                      ),
+                    );
+                    if (result != null) {
+                      _loadTemplates();
+                    }
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('New Template'),
+                ),
     );
   }
 }

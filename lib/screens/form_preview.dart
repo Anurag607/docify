@@ -32,12 +32,12 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
   }
 
   Future<Uint8List> _generatePdf() async {
-    final fontData =
-        await rootBundle.load("assets/fonts/NotoSansDevanagari-Regular.ttf");
-    final ttf = pw.Font.ttf(fontData);
-    final pdf = pw.Document(theme: pw.ThemeData.withFont(base: ttf));
+    final pdf = pw.Document();
+    final fontData = await rootBundle.load("assets/fonts/Mukta-Regular.ttf");
+    final hindiFont = pw.Font.ttf(fontData);
+    // final hindiFont = await PdfGoogleFonts.notoSansDevanagariRegular();
 
-    // Load ministry logo if available
+    // Load amd logo if available
     pw.MemoryImage? amdLogo;
     try {
       final ByteData data =
@@ -48,7 +48,7 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
       print('Error loading ministry logo: $e');
     }
 
-    // Load emblem logo if available
+    // Load anniversary logo if available
     pw.MemoryImage? anniversaryLogo;
     try {
       final ByteData data = await rootBundle.load('assets/images/75_logo.png');
@@ -85,7 +85,8 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
         build: (pw.Context context) {
           return pw.Container(
             decoration: pw.BoxDecoration(
-              border: pw.Border.all(width: 1, color: PdfColors.black),
+              color: PdfColor.fromHex("#e8e8e8"),
+              // border: pw.Border.all(width: 1, color: PdfColors.black),
             ),
             padding: const pw.EdgeInsets.only(left: 8, right: 8, top: 8),
             child: pw.Column(
@@ -93,7 +94,7 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
               children: [
                 // Header section
                 pw.Container(
-                  color: PdfColors.grey300,
+                  color: PdfColor.fromHex("#d9d9d9"),
                   padding: const pw.EdgeInsets.symmetric(
                       vertical: 5, horizontal: 10),
                   child: pw.Row(
@@ -105,29 +106,29 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                         children: [
                           pw.Text('भारत सरकार GOVERNMENT OF INDIA',
                               style: pw.TextStyle(
-                                  font: ttf,
+                                  font: hindiFont,
                                   fontSize: 10,
                                   fontWeight: pw.FontWeight.bold)),
                           pw.Text(
                               'परमाणु ऊर्जा विभाग DEPARTMENT OF ATOMIC ENERGY',
                               style: pw.TextStyle(
-                                  font: ttf,
+                                  font: hindiFont,
                                   fontSize: 9,
                                   fontWeight: pw.FontWeight.bold)),
                           pw.Text('परमाणु खनिज अन्वेषण एवं अनुसंधान निदेशालय',
                               style: pw.TextStyle(
-                                  font: ttf,
+                                  font: hindiFont,
                                   fontSize: 8,
                                   fontWeight: pw.FontWeight.bold)),
                           pw.Text(
                               'ATOMIC MINERALS DIRECTORATE FOR EXPLORATION & RESEARCH',
                               style: pw.TextStyle(
-                                  font: ttf,
+                                  font: hindiFont,
                                   fontSize: 8,
                                   fontWeight: pw.FontWeight.bold)),
                           pw.Text('उत्तरी क्षेत्र NORTHERN REGION',
                               style: pw.TextStyle(
-                                  font: ttf,
+                                  font: hindiFont,
                                   fontSize: 9,
                                   fontWeight: pw.FontWeight.bold)),
                         ],
@@ -146,12 +147,12 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                     children: [
                       pw.Text('आकस्मिक प्रवेश पत्र',
                           style: pw.TextStyle(
-                              font: ttf,
+                              font: hindiFont,
                               fontSize: 11,
                               fontWeight: pw.FontWeight.bold)),
                       pw.Text('Casual Entry Permit',
                           style: pw.TextStyle(
-                              font: ttf,
+                              font: hindiFont,
                               fontSize: 12,
                               fontWeight: pw.FontWeight.bold,
                               decoration: pw.TextDecoration.underline)),
@@ -172,11 +173,12 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                           children: [
                             pw.Text('(वैध अवधि)',
                                 style: pw.TextStyle(
-                                    font: ttf,
+                                    font: hindiFont,
                                     fontSize: 8,
                                     fontWeight: pw.FontWeight.bold)),
                             pw.Text('Valid Duration: $validDuration',
-                                style: pw.TextStyle(font: ttf, fontSize: 8)),
+                                style:
+                                    pw.TextStyle(font: hindiFont, fontSize: 8)),
                           ],
                         ),
                       ),
@@ -186,13 +188,13 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                           children: [
                             pw.Text('(मुद्रित)',
                                 style: pw.TextStyle(
-                                    font: ttf,
+                                    font: hindiFont,
                                     fontSize: 8,
                                     fontWeight: pw.FontWeight.bold)),
                             pw.Text(
                                 'Printed On: ${regDate.day}/${regDate.month}/${regDate.year} ${regDate.hour}:${regDate.minute}',
                                 style: pw.TextStyle(
-                                    font: ttf,
+                                    font: hindiFont,
                                     fontSize: 8,
                                     fontWeight: pw.FontWeight.bold)),
                           ],
@@ -215,11 +217,12 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                           children: [
                             pw.Text('(पंजीकरण संख्या)',
                                 style: pw.TextStyle(
-                                    font: ttf,
+                                    font: hindiFont,
                                     fontSize: 8,
                                     fontWeight: pw.FontWeight.bold)),
                             pw.Text('Reg No: $regNoSubstring',
-                                style: pw.TextStyle(font: ttf, fontSize: 8)),
+                                style:
+                                    pw.TextStyle(font: hindiFont, fontSize: 8)),
                           ],
                         ),
                       ),
@@ -229,12 +232,13 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                           children: [
                             pw.Text('(पंजीकरण तिथि)',
                                 style: pw.TextStyle(
-                                    font: ttf,
+                                    font: hindiFont,
                                     fontSize: 8,
                                     fontWeight: pw.FontWeight.bold)),
                             pw.Text(
                                 'Registration Date: ${regDate.day}/${regDate.month}/${regDate.year}',
-                                style: pw.TextStyle(font: ttf, fontSize: 8)),
+                                style:
+                                    pw.TextStyle(font: hindiFont, fontSize: 8)),
                           ],
                         ),
                       ),
@@ -252,22 +256,36 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                       child: pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          _buildInfoRow('नाम', 'Name of visitor:',
-                              widget.formData['Name of Visitor'] ?? '', ttf),
-                          _buildInfoRow('मोबाइल', 'Mobile No:',
-                              widget.formData['Mobile No.'] ?? '', ttf),
                           _buildInfoRow(
-                              'सामग्री',
-                              'Material carried in:',
-                              widget.formData['Material carried in'] ?? '',
-                              ttf),
+                            'नाम',
+                            'Name of visitor:',
+                            widget.formData['Name of visitor'] ?? '',
+                            hindiFont,
+                          ),
                           _buildInfoRow(
-                              'अधिकारी',
-                              'Officer (Name) to be visited:',
-                              widget.formData['Officer Name'] ?? '',
-                              ttf),
-                          _buildInfoRow('पीवीसी विवरण', 'Details of PVC:',
-                              widget.formData['PVC Details'] ?? '', ttf),
+                            'मोबाइल',
+                            'Mobile No:',
+                            widget.formData['Mobile No.'] ?? '',
+                            hindiFont,
+                          ),
+                          _buildInfoRow(
+                            'सामग्री',
+                            'Material carried in:',
+                            widget.formData['Material carried in'] ?? '',
+                            hindiFont,
+                          ),
+                          _buildInfoRow(
+                            'अधिकारी',
+                            'Officer (Name) to be visited:',
+                            widget.formData['Officer Name'] ?? '',
+                            hindiFont,
+                          ),
+                          _buildInfoRow(
+                            'पीवीसी विवरण',
+                            'Details of PVC:',
+                            widget.formData['PVC Details'] ?? '',
+                            hindiFont,
+                          ),
                         ],
                       ),
                     ),
@@ -277,16 +295,36 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                       child: pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          _buildInfoRow('पता', 'Address:',
-                              widget.formData['Address'] ?? '', ttf),
-                          _buildInfoRow('आईडी विवरण', 'ID No./Aadhar No:',
-                              widget.formData['ID Details'] ?? '', ttf),
-                          _buildInfoRow('उद्देश्य', 'Purpose of visit:',
-                              widget.formData['Purpose'] ?? '', ttf),
-                          _buildInfoRow('स्थान', 'Place to be visited:',
-                              widget.formData['Place'] ?? '', ttf),
-                          _buildInfoRow('स्टाफ', 'Escorting staff:',
-                              widget.formData['Escorting staff'] ?? '', ttf),
+                          _buildInfoRow(
+                            'पता',
+                            'Address:',
+                            widget.formData['Address'] ?? '',
+                            hindiFont,
+                          ),
+                          _buildInfoRow(
+                            'आईडी विवरण',
+                            'ID No. /Aadhar No:',
+                            widget.formData['ID Details'] ?? 'sss',
+                            hindiFont,
+                          ),
+                          _buildInfoRow(
+                            'उद्देश्य',
+                            'Purpose of visit:',
+                            widget.formData['Purpose'] ?? '',
+                            hindiFont,
+                          ),
+                          _buildInfoRow(
+                            'स्थान',
+                            'Place to be visited:',
+                            widget.formData['Place'] ?? '11',
+                            hindiFont,
+                          ),
+                          _buildInfoRow(
+                            'स्टाफ',
+                            'Escorting staff:',
+                            widget.formData['Escorting staff'] ?? '',
+                            hindiFont,
+                          ),
                         ],
                       ),
                     ),
@@ -306,8 +344,8 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                                         pw.Border.all(color: PdfColors.black)),
                                 alignment: pw.Alignment.center,
                                 child: pw.Text('Photo',
-                                    style:
-                                        pw.TextStyle(font: ttf, fontSize: 8)),
+                                    style: pw.TextStyle(
+                                        font: hindiFont, fontSize: 8)),
                               ),
                       ),
                     ),
@@ -358,14 +396,15 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
   }
 
   pw.Widget _buildInfoRow(
-      String hindiLabel, String englishLabel, String value, pw.Font ttf) {
+      String hindiLabel, String englishLabel, String value, pw.Font font) {
     return pw.Padding(
       padding: const pw.EdgeInsets.symmetric(vertical: 2),
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Row(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            mainAxisAlignment: pw.MainAxisAlignment.center,
             children: [
               pw.SizedBox(
                 child: pw.Text(englishLabel,
@@ -374,8 +413,8 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
               ),
               pw.SizedBox(width: 5),
               pw.Expanded(
-                child:
-                    pw.Text(value, style: pw.TextStyle(font: ttf, fontSize: 9)),
+                child: pw.Text(value,
+                    style: pw.TextStyle(font: font, fontSize: 9)),
               ),
             ],
           ),

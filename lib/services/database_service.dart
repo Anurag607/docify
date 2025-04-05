@@ -67,8 +67,8 @@ class DatabaseService {
       'templates',
       {
         'id': templateId,
-        'name': 'Daily Visitor Pass',
-        'description': 'Template for daily visitor pass',
+        'name': 'Casual Entry Permit',
+        'description': 'Template for Casual Entry Permit',
         'created_at': now.millisecondsSinceEpoch,
         'updated_at': now.millisecondsSinceEpoch,
       },
@@ -82,9 +82,9 @@ class DatabaseService {
       {'label': 'Officer Name', 'type': 'text', 'required': true},
       {'label': 'PVC Details', 'type': 'text', 'required': false},
       {'label': 'Address', 'type': 'text', 'required': true},
-      {'label': 'ID Details.', 'type': 'text', 'required': true},
+      {'label': 'ID Details', 'type': 'text', 'required': true},
       {'label': 'Purpose', 'type': 'text', 'required': true},
-      {'label': 'Place to be visited', 'type': 'text', 'required': true},
+      {'label': 'Place', 'type': 'text', 'required': true},
       {'label': 'Escorting staff', 'type': 'text', 'required': false},
       {'label': 'Visitor Photo', 'type': 'image', 'required': true},
     ];

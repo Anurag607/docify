@@ -6,9 +6,6 @@ import 'package:docify/screens/form_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 import '../models/template.dart';
 import '../models/form_field.dart';
 
@@ -173,134 +170,26 @@ class _FormFillScreenState extends State<FormFillScreen> {
     }
   }
 
-  Future<pw.Document> _generatePdf() async {
-    final formData = _formKey.currentState!.value;
-    final pdf = pw.Document();
-
-    pdf.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context pwContext) {
-          // Changed from context to pwContext
-          return pw.Padding(
-            padding: const pw.EdgeInsets.all(40.0),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Header(
-                  level: 0,
-                  child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text(
-                        widget.template.name,
-                        style: pw.TextStyle(
-                          fontSize: 28,
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.blueAccent,
-                        ),
-                      ),
-                      if (widget.template.description.isNotEmpty) ...[
-                        pw.SizedBox(height: 8),
-                        pw.Text(
-                          widget.template.description,
-                          style: pw.TextStyle(
-                            fontSize: 12,
-                            color: PdfColors.grey700,
-                          ),
-                        ),
-                      ],
-                      pw.SizedBox(height: 4),
-                      pw.Divider(color: PdfColors.blueAccent),
-                    ],
-                  ),
-                ),
-                pw.SizedBox(height: 30),
-                ...widget.template.fields.map((field) {
-                  final value = formData[field.id]?.toString() ?? '';
-                  return pw.Padding(
-                    padding: const pw.EdgeInsets.symmetric(vertical: 8),
-                    child: pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text(
-                          field.label,
-                          style: pw.TextStyle(
-                            fontSize: 14,
-                            fontWeight: pw.FontWeight.bold,
-                            color: PdfColors.blueGrey800,
-                          ),
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Container(
-                          width: double.infinity,
-                          padding: const pw.EdgeInsets.all(8),
-                          decoration: pw.BoxDecoration(
-                            color: PdfColors.grey100,
-                            borderRadius: const pw.BorderRadius.all(
-                              pw.Radius.circular(4),
-                            ),
-                          ),
-                          child: pw.Text(
-                            value,
-                            style: const pw.TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-
-    return pdf;
-  }
-
-  Future<void> _handlePdfAction(
-      BuildContext context, Future<void> Function(pw.Document) action) async {
-    if (_pickedImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please capture the required image1'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-      return;
-    }
-
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
-      final pdf = await _generatePdf();
-      if (!mounted) return;
-      await action(pdf);
-    } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please fill in all required fields'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.template.name),
         actions: [
-          // IconButton(
-          //   icon: const Icon(Icons.camera_alt),
-          //   tooltip: 'Capture Photo',
-          //   onPressed: captureVisitorPhoto,
-          // ),
-          IconButton(
-            icon: const Icon(Icons.preview_outlined),
-            tooltip: 'Preview document',
+          ElevatedButton.icon(
+            icon: const Icon(Icons.preview_outlined, color: Colors.white),
+            label: const Text(
+              'Preview Document',
+              style: TextStyle(color: Colors.white),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey.shade800,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
             onPressed: () {
               if (_pickedImage == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -341,30 +230,6 @@ class _FormFillScreenState extends State<FormFillScreen> {
                 );
               }
             },
-          ),
-          IconButton(
-            icon: const Icon(Icons.download_outlined),
-            tooltip: 'Download as PDF',
-            onPressed: () => _handlePdfAction(context, (pdf) async {
-              await Printing.sharePdf(
-                bytes: await pdf.save(),
-                filename:
-                    '${widget.template.name.toLowerCase().replaceAll(' ', '_')}.pdf',
-              );
-            }),
-          ),
-          IconButton(
-            icon: const Icon(Icons.print_outlined),
-            tooltip: 'Print document',
-            onPressed: () => _handlePdfAction(context, (pdf) async {
-              final printer = await Printing.pickPrinter(context: context);
-              if (printer != null) {
-                await Printing.directPrintPdf(
-                  printer: printer,
-                  onLayout: (format) => pdf.save(),
-                );
-              }
-            }),
           ),
         ],
       ),
