@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:docify/services/capture_image.dart';
 import 'package:docify/screens/form_preview.dart';
 import 'package:flutter/material.dart';
@@ -20,17 +19,16 @@ class FormFillScreen extends StatefulWidget {
 
 class _FormFillScreenState extends State<FormFillScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
-  XFile? _pickedImage;
+  File? _pickedImage;
 
   Future captureVisitorPhoto() async {
     final File? imageFile = await ImagePickerService.pickImage(context);
 
     if (imageFile != null) {
-      final imagePath = imageFile.path;
       setState(() {
-        _pickedImage = XFile(imagePath);
+        _pickedImage = imageFile;
       });
-      print('Image captured: $imagePath');
+      print('Image captured: ${imageFile.path}');
     } else {
       print('No image captured.');
     }

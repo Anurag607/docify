@@ -1,9 +1,13 @@
 import 'dart:io';
-import 'package:camera/camera.dart';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:docify/services/camera_macos_photo_capture.dart';
 import 'package:flutter/material.dart';
-import 'package:camera_macos/camera_macos.dart'
-    if (dart.library.html) 'package:camera/camera.dart';
+
+import 'package:camera_macos/camera_macos.dart' as camera_macos;
+import 'package:flutter/rendering.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ImagePickerService {
   static Future<File?> pickImage(BuildContext context) async {
@@ -24,8 +28,8 @@ class ImagePickerService {
     try {
       return await MacOSPhotoCaptureDialog.show(
         context,
-        resolution: PictureResolution.low,
-        format: PictureFormat.jpg,
+        resolution: camera_macos.PictureResolution.low,
+        format: camera_macos.PictureFormat.jpg,
       );
     } catch (e) {
       _showErrorDialog(context, 'Error capturing image: $e');
@@ -35,36 +39,10 @@ class ImagePickerService {
 
   /// Pick image using camera package on Windows
   static Future<File?> _pickImageWindows(BuildContext context) async {
-    try {
-      // Import the camera package
-      // Note: This requires 'camera: ^0.11.0' in your pubspec.yaml
-      // and import 'package:camera/camera.dart' at the top of the file
-
-      // Get available cameras
-      final cameras = await availableCameras();
-      if (cameras.isEmpty) {
-        _showErrorDialog(context, 'No cameras found');
-        return null;
-      }
-
-      // Use the first camera (usually front camera)
-      final firstCamera = cameras.first;
-
-      // Show camera preview dialog for Windows
-      final XFile? imageFile = await showDialog<XFile>(
-        context: context,
-        builder: (context) => WindowsCameraDialog(camera: firstCamera),
-      );
-
-      if (imageFile == null) {
-        return null;
-      }
-
-      return File(imageFile.path);
-    } catch (e) {
-      _showErrorDialog(context, 'Error capturing image: $e');
-      return null;
-    }
+    return await showDialog<File>(
+      context: context,
+      builder: (ctx) => _WindowsCameraDialog(),
+    );
   }
 
   static void _showErrorDialog(BuildContext context, String message) {
@@ -84,138 +62,104 @@ class ImagePickerService {
   }
 }
 
-/// Windows camera preview dialog using the camera package
-class WindowsCameraDialog extends StatefulWidget {
-  final CameraDescription camera;
-
-  const WindowsCameraDialog({super.key, required this.camera});
-
+class _WindowsCameraDialog extends StatefulWidget {
   @override
-  State<WindowsCameraDialog> createState() => _WindowsCameraDialogState();
+  State<_WindowsCameraDialog> createState() => _WindowsCameraDialogState();
 }
 
-class _WindowsCameraDialogState extends State<WindowsCameraDialog> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
-  bool _isCapturing = false;
+class _WindowsCameraDialogState extends State<_WindowsCameraDialog> {
+  final RTCVideoRenderer _renderer = RTCVideoRenderer();
+  final GlobalKey _previewContainerKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-
-    // Initialize the camera controller
-    _controller = CameraController(
-      widget.camera,
-      ResolutionPreset.medium,
-      enableAudio: false,
-    );
-
-    _initializeControllerFuture = _controller.initialize();
+    _initCamera();
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  Future<void> _initCamera() async {
+    await _renderer.initialize();
 
-  Future<void> _takePicture() async {
-    if (_isCapturing) return;
-
-    setState(() {
-      _isCapturing = true;
-    });
+    final Map<String, dynamic> mediaConstraints = {
+      'audio': false,
+      'video': {
+        'facingMode': 'user',
+        'width': 640,
+        'height': 480,
+        'frameRate': 30,
+      }
+    };
 
     try {
-      await _initializeControllerFuture;
-
-      final XFile image = await _controller.takePicture();
-
-      if (!mounted) return;
-
-      Navigator.of(context).pop(image);
+      final stream =
+          await navigator.mediaDevices.getUserMedia(mediaConstraints);
+      setState(() {
+        _renderer.srcObject = stream;
+      });
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error taking picture: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isCapturing = false;
-        });
-      }
+      print("Camera initialization failed: $e");
+    }
+  }
+
+  Future<File?> _captureImage() async {
+    try {
+      RenderRepaintBoundary boundary = _previewContainerKey.currentContext!
+          .findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: 0.5);
+      ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/captured_photo.png');
+      await file.writeAsBytes(pngBytes);
+      return file;
+    } catch (e) {
+      print("Error capturing image: $e");
+      return null;
     }
   }
 
   @override
+  void dispose() {
+    _renderer.srcObject?.getTracks().forEach((t) => t.stop());
+    _renderer.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Dialog(
-      insetPadding: const EdgeInsets.all(24),
-      child: SizedBox(
-        width: 640,
-        height: 520,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Take a Photo',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
+    return AlertDialog(
+      title: const Text('Camera'),
+      content: RepaintBoundary(
+        key: _previewContainerKey,
+        child: SizedBox(
+          width: 500,
+          height: 400,
+          child: Container(
+            width: 500,
+            height: 400,
+            color: Colors.black,
+            child: RTCVideoView(
+              _renderer,
+              objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
             ),
-            const Divider(),
-            Expanded(
-              child: FutureBuilder<void>(
-                future: _initializeControllerFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return CameraPreview(_controller);
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton.icon(
-                onPressed: _isCapturing ? null : _takePicture,
-                icon: _isCapturing
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.camera_alt),
-                label: Text(_isCapturing ? 'Processing...' : 'Take Photo'),
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            final file = await _captureImage();
+            Navigator.of(context).pop(file);
+          },
+          child: const Text('Capture'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(null),
+          child: const Text('Cancel'),
+        ),
+      ],
     );
   }
 }

@@ -129,30 +129,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.9.5"
-  camera:
-    dependency: "direct main"
-    description:
-      name: camera
-      sha256: "413d2b34fe28496c35c69ede5b232fb9dd5ca2c3a4cb606b14efc1c7546cc8cb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.11.1"
-  camera_android_camerax:
-    dependency: transitive
-    description:
-      name: camera_android_camerax
-      sha256: "13784f539c7f104766bff84e4479a70f03b29d78b208278be45c939250d9d7f5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.6.14+1"
-  camera_avfoundation:
-    dependency: transitive
-    description:
-      name: camera_avfoundation
-      sha256: "3057ada0b30402e3a9b6dffec365c9736a36edbf04abaecc67c4309eadc86b49"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.9.18+9"
   camera_macos:
     dependency: "direct main"
     description:
@@ -161,22 +137,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.9"
-  camera_platform_interface:
-    dependency: transitive
-    description:
-      name: camera_platform_interface
-      sha256: "953e7baed3a7c8fae92f7200afeb2be503ff1a17c3b4e4ed7b76f008c2810a31"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.9.0"
-  camera_web:
-    dependency: transitive
-    description:
-      name: camera_web
-      sha256: "595f28c89d1fb62d77c73c633193755b781c6d2e0ebcd8dc25b763b514e6ba8f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.5"
   characters:
     dependency: transitive
     description:
@@ -273,6 +233,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  dart_webrtc:
+    dependency: transitive
+    description:
+      name: dart_webrtc
+      sha256: "8565f1f1f412b8a6fd862f3a157560811e61eeeac26741c735a5d2ff409a0202"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.3"
   device_info_plus:
     dependency: transitive
     description:
@@ -413,6 +381,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_webrtc:
+    dependency: "direct main"
+    description:
+      name: flutter_webrtc
+      sha256: "4f0d6e248f178e617f249b6a2f432b5981e3300c2896fc8d476fc2aa1f525547"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.1"
   form_builder_validators:
     dependency: "direct main"
     description:
@@ -914,6 +890,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.5.5"
+  sqflite_common_ffi:
+    dependency: "direct main"
+    description:
+      name: sqflite_common_ffi
+      sha256: "1f3ef3888d3bfbb47785cc1dda0dc7dd7ebd8c1955d32a9e8e9dae1e38d1c4c1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.5"
   sqflite_darwin:
     dependency: transitive
     description:
@@ -930,6 +914,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
+  sqlite3:
+    dependency: transitive
+    description:
+      name: sqlite3
+      sha256: "310af39c40dd0bb2058538333c9d9840a2725ae0b9f77e4fd09ad6696aa8f66e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.7.5"
   stack_trace:
     dependency: transitive
     description:
@@ -1202,6 +1194,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  webrtc_interface:
+    dependency: transitive
+    description:
+      name: webrtc_interface
+      sha256: e92afec11152a9ccb5c9f35482754edd99696e886ab6acaf90c06dd2d09f09eb
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.2+hotfix.1"
   win32:
     dependency: transitive
     description:
