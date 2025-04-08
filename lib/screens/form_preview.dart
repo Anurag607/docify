@@ -128,10 +128,11 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
 
     final hindiImages = await loadHindiImages();
 
-    const double inch = 72.0;
+    // const double inch = 72.0;
     pdf.addPage(
       pw.Page(
-        pageFormat: PdfPageFormat(10 * inch, 6.0 * inch, marginAll: 0),
+        // pageFormat: PdfPageFormat(10 * inch, 6.0 * inch, marginAll: 0),
+        pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
           return pw.Container(
             decoration: pw.BoxDecoration(
