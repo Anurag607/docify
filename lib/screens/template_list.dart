@@ -165,95 +165,95 @@ class _TemplateListState extends State<TemplateList> {
                                   ],
                                 ),
                               ),
-                              PopupMenuButton<String>(
-                                icon: Icon(
-                                  Icons.more_vert,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withOpacity(0.6),
-                                ),
-                                onSelected: (value) async {
-                                  if (value == 'edit') {
-                                    final result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            TemplateBuilder(template: template),
-                                      ),
-                                    );
-                                    if (result != null) {
-                                      _loadTemplates();
-                                    }
-                                  } else if (value == 'delete') {
-                                    final confirm = await showDialog<bool>(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: const Text('Delete Template'),
-                                        content: Text(
-                                            'Are you sure you want to delete "${template.name}"?'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, false),
-                                            child: const Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, true),
-                                            style: TextButton.styleFrom(
-                                              foregroundColor: Theme.of(context)
-                                                  .colorScheme
-                                                  .error,
-                                            ),
-                                            child: const Text('Delete'),
-                                          ),
-                                        ],
-                                      ),
-                                    );
+                              // PopupMenuButton<String>(
+                              //   icon: Icon(
+                              //     Icons.more_vert,
+                              //     color: Theme.of(context)
+                              //         .colorScheme
+                              //         .onSurface
+                              //         .withOpacity(0.6),
+                              //   ),
+                              //   onSelected: (value) async {
+                              //     if (value == 'edit') {
+                              //       final result = await Navigator.push(
+                              //         context,
+                              //         MaterialPageRoute(
+                              //           builder: (context) =>
+                              //               TemplateBuilder(template: template),
+                              //         ),
+                              //       );
+                              //       if (result != null) {
+                              //         _loadTemplates();
+                              //       }
+                              //     } else if (value == 'delete') {
+                              //       final confirm = await showDialog<bool>(
+                              //         context: context,
+                              //         builder: (context) => AlertDialog(
+                              //           title: const Text('Delete Template'),
+                              //           content: Text(
+                              //               'Are you sure you want to delete "${template.name}"?'),
+                              //           actions: [
+                              //             TextButton(
+                              //               onPressed: () =>
+                              //                   Navigator.pop(context, false),
+                              //               child: const Text('Cancel'),
+                              //             ),
+                              //             TextButton(
+                              //               onPressed: () =>
+                              //                   Navigator.pop(context, true),
+                              //               style: TextButton.styleFrom(
+                              //                 foregroundColor: Theme.of(context)
+                              //                     .colorScheme
+                              //                     .error,
+                              //               ),
+                              //               child: const Text('Delete'),
+                              //             ),
+                              //           ],
+                              //         ),
+                              //       );
 
-                                    if (confirm == true) {
-                                      await _databaseService
-                                          .deleteTemplate(template.id);
-                                      _loadTemplates();
-                                    }
-                                  }
-                                },
-                                itemBuilder: (context) => [
-                                  const PopupMenuItem(
-                                    value: 'edit',
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.edit_outlined),
-                                        SizedBox(width: 8),
-                                        Text('Edit'),
-                                      ],
-                                    ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: 'delete',
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.delete_outlined,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .error,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Delete',
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .error,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              //       if (confirm == true) {
+                              //         await _databaseService
+                              //             .deleteTemplate(template.id);
+                              //         _loadTemplates();
+                              //       }
+                              //     }
+                              //   },
+                              //   itemBuilder: (context) => [
+                              //     const PopupMenuItem(
+                              //       value: 'edit',
+                              //       child: Row(
+                              //         children: [
+                              //           Icon(Icons.edit_outlined),
+                              //           SizedBox(width: 8),
+                              //           Text('Edit'),
+                              //         ],
+                              //       ),
+                              //     ),
+                              //     PopupMenuItem(
+                              //       value: 'delete',
+                              //       child: Row(
+                              //         children: [
+                              //           Icon(
+                              //             Icons.delete_outlined,
+                              //             color: Theme.of(context)
+                              //                 .colorScheme
+                              //                 .error,
+                              //           ),
+                              //           const SizedBox(width: 8),
+                              //           Text(
+                              //             'Delete',
+                              //             style: TextStyle(
+                              //               color: Theme.of(context)
+                              //                   .colorScheme
+                              //                   .error,
+                              //             ),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
                           const SizedBox(height: 12),

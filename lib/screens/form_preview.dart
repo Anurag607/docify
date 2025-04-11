@@ -248,7 +248,7 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
 
                         // Valid Duration
                         pw.Container(
-                          padding: const pw.EdgeInsets.symmetric(vertical: 5),
+                          padding: const pw.EdgeInsets.only(top: 5),
                           child: pw.Row(
                             mainAxisAlignment:
                                 pw.MainAxisAlignment.spaceBetween,
@@ -276,7 +276,10 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
 
                         // Reg Info
                         pw.Container(
-                          padding: const pw.EdgeInsets.symmetric(vertical: 5),
+                          padding: const pw.EdgeInsets.only(
+                            top: 5,
+                            bottom: 10,
+                          ),
                           child: pw.Row(
                             mainAxisAlignment:
                                 pw.MainAxisAlignment.spaceBetween,
@@ -450,11 +453,57 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                                 ],
                               ),
                               pw.SizedBox(height: 10),
-                              pw.SizedBox(
-                                height: 50,
-                                child: _buildSignatureBox(
-                                    'Signature of the officer visited with time'),
-                              )
+                              pw.Row(
+                                  mainAxisAlignment:
+                                      pw.MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment:
+                                      pw.CrossAxisAlignment.start,
+                                  children: [
+                                    pw.SizedBox(
+                                      height: 50,
+                                      child: _buildSignatureBox(
+                                        'Signature of the officer visited with time',
+                                      ),
+                                    ),
+                                    pw.Row(
+                                      mainAxisAlignment:
+                                          pw.MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          pw.CrossAxisAlignment.start,
+                                      children: [
+                                        pw.Text(
+                                          'Out Time: ',
+                                          style: pw.TextStyle(
+                                            fontSize: 8,
+                                            fontWeight: pw.FontWeight.bold,
+                                          ),
+                                        ),
+                                        pw.Text(
+                                          '________ Hrs',
+                                          style: pw.TextStyle(
+                                            fontSize: 8,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    pw.Row(
+                                      children: [
+                                        pw.Text(
+                                          'In time: ',
+                                          style: pw.TextStyle(
+                                            fontSize: 8,
+                                            fontWeight: pw.FontWeight.bold,
+                                          ),
+                                        ),
+                                        pw.Text(
+                                          '${regDate.hour}: ${regDate.minute} Hrs',
+                                          style: pw.TextStyle(
+                                            fontSize: 8,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ])
                             ],
                           ),
                         ),
@@ -638,7 +687,7 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
         pw.Text(
           text,
           style: pw.TextStyle(
-            fontSize: 10,
+            fontSize: 8,
             fontWeight: pw.FontWeight.bold,
           ),
         ),
@@ -691,16 +740,16 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
             icon: const Icon(Icons.download),
             onPressed: _savePdf,
           ),
-          IconButton(
-            icon: const Icon(Icons.print),
-            onPressed: () async {
-              final bytes = await _pdfFuture;
-              await Printing.layoutPdf(
-                onLayout: (_) => Future.value(bytes),
-                name: 'Visitor Pass',
-              );
-            },
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.print),
+          //   onPressed: () async {
+          //     final bytes = await _pdfFuture;
+          //     await Printing.layoutPdf(
+          //       onLayout: (_) => Future.value(bytes),
+          //       name: 'Visitor Pass',
+          //     );
+          //   },
+          // ),
         ],
       ),
       body: FutureBuilder<Uint8List>(
