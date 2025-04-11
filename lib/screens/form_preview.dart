@@ -522,9 +522,6 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                         pw.Container(
                           width: PdfPageFormat.a4.width,
                           height: 335,
-                          decoration: pw.BoxDecoration(
-                            color: PdfColors.grey100,
-                          ),
                           child: pw.Center(
                             child: pw.Image(
                               instructionsImage!,
