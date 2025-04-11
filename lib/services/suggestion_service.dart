@@ -1,4 +1,4 @@
-import 'package:docify/services/form_entry.dart';
+import 'package:docify/models/form_entry.dart';
 import '../services/database_service.dart';
 
 class SuggestionService {

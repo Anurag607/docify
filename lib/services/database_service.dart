@@ -1,4 +1,4 @@
-import 'package:docify/services/form_entry.dart';
+import 'package:docify/models/form_entry.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
@@ -286,10 +286,6 @@ class DatabaseService {
   // Form entry methods for DatabaseService class
   Future<String> saveFormEntry(FormEntry entry) async {
     final db = await database;
-
-    // First, check if we need to prune old entries (keeping only the most recent 20)
-    await _pruneOldEntries(db, entry.templateId);
-
     await db.insert(
       'form_entries',
       {
@@ -302,35 +298,35 @@ class DatabaseService {
     return entry.id;
   }
 
-  Future<void> _pruneOldEntries(Database db, String templateId) async {
-    // Get the count of entries for this template
-    final count = Sqflite.firstIntValue(await db.rawQuery(
-      'SELECT COUNT(*) FROM form_entries WHERE template_id = ?',
-      [templateId],
-    ));
+  Future<void> clearTemplateEntries(String templateId) async {
+    final db = await database;
+    await db.delete(
+      'form_entries',
+      where: 'template_id = ?',
+      whereArgs: [templateId],
+    );
+  }
 
-    if (count != null && count >= 20) {
-      // Find IDs of entries to keep (the 19 most recent ones)
-      final entriesToKeep = await db.query(
-        'form_entries',
-        columns: ['id'],
-        where: 'template_id = ?',
-        whereArgs: [templateId],
-        orderBy: 'created_at DESC',
-        limit: 19,
-      );
+  Future<List<FormEntry>> getAssociatedEntries(
+      String templateId, String fieldLabel, String fieldValue) async {
+    final db = await database;
+    final List<Map<String, dynamic>> entryMaps = await db.query(
+      'form_entries',
+      where: 'template_id = ?',
+      whereArgs: [templateId],
+      orderBy: 'created_at DESC',
+    );
 
-      final keepIds = entriesToKeep.map((e) => e['id'] as String).toList();
-
-      // Delete all entries except the ones we want to keep
-      if (keepIds.isNotEmpty) {
-        final placeholders = List.filled(keepIds.length, '?').join(',');
-        await db.rawDelete(
-          'DELETE FROM form_entries WHERE template_id = ? AND id NOT IN ($placeholders)',
-          [templateId, ...keepIds],
-        );
-      }
-    }
+    return entryMaps
+        .map((map) => FormEntry(
+              id: map['id'],
+              templateId: map['template_id'],
+              fieldValues:
+                  Map<String, String>.from(jsonDecode(map['field_values'])),
+              createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at']),
+            ))
+        .where((entry) => entry.fieldValues[fieldLabel] == fieldValue)
+        .toList();
   }
 
   Future<List<FormEntry>> getRecentEntries(String templateId,
@@ -374,12 +370,28 @@ class DatabaseService {
 
     return suggestions.toList();
   }
+
+  Future<List<FormEntry>> getAllEntriesForTemplate(String templateId,
+      {int page = 1, int pageSize = 20}) async {
+    final db = await database;
+    final offset = (page - 1) * pageSize;
+
+    final List<Map<String, dynamic>> entryMaps = await db.query(
+      'form_entries',
+      where: 'template_id = ?',
+      whereArgs: [templateId],
+      orderBy: 'created_at DESC',
+      limit: pageSize,
+      offset: offset,
+    );
+
+    return entryMaps.map((map) {
+      return FormEntry(
+        id: map['id'],
+        templateId: map['template_id'],
+        fieldValues: Map<String, String>.from(jsonDecode(map['field_values'])),
+        createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at']),
+      );
+    }).toList();
+  }
 }
-// This code is a Dart class that provides methods to interact with a SQLite database.
-// It includes methods to initialize the database, create tables, insert default data,
-// and perform CRUD operations on templates and form entries.
-// The class uses the sqflite package for database operations and uuid package for generating unique IDs.
-// The database schema includes tables for templates, form fields, and form entries.
-// The class also includes methods to ensure a default template exists, save templates and form entries,
-// retrieve templates and form entries, delete templates, and get suggestions for form fields based on recent entries.
-// The code is structured to be reusable and maintainable, with clear separation of concerns.
