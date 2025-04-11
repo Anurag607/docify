@@ -459,6 +459,16 @@ class _FormPreviewScreenState extends State<FormPreviewScreen> {
                           ),
                         ),
 
+                        // Divider
+                        pw.SizedBox(
+                          width: PdfPageFormat.a4.width * 0.75,
+                          child: pw.Divider(
+                            color: PdfColors.black,
+                            thickness: 0.5,
+                            height: 20,
+                          ),
+                        ),
+
                         // Footer with instructions
                         pw.Container(
                           width: PdfPageFormat.a4.width,
