@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="YourAppName" Language="1033" Version="1.0.0.0" Manufacturer="YourCompany" UpgradeCode="PUT-GUID-HERE">
+  <Product Id="*" Name="Docify" Language="1033" Version="1.0.0.0" Manufacturer="Docify" UpgradeCode="ca0eca5f-6e3e-4b57-93b2-9535f2d82db6">
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
 
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Docify is already installed." />
     <MediaTemplate />
 
-    <Feature Id="ProductFeature" Title="YourAppName" Level="1">
+    <Feature Id="ProductFeature" Title="Docify" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
     </Feature>
   </Product>
@@ -14,13 +14,13 @@
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER" Name="YourAppName" />
+        <Directory Id="INSTALLFOLDER" Name="Docify" />
       </Directory>
     </Directory>
 
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="MainExecutable" Guid="PUT-GUID-HERE">
-        <File Source="build\windows\runner\Release\YourAppName.exe" />
+      <Component Id="MainExecutable" Guid="ca0eca5f-6e3e-4b57-93b2-9535f2d82db6">
+        <File Source="build\windows\x64\runner\Release\docify_boxed.exe" />
       </Component>
     </ComponentGroup>
   </Fragment>
