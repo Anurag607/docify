@@ -19,5 +19,5 @@ MSI Install Commands:
 
 ```
 candle installer.wxs
-light installer.wixobj -o YourAppName.msi
+light installer.wixobj -o docify.msi
 ```
