@@ -4,7 +4,7 @@
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of Docify is already installed." />
-    <MediaTemplate />
+    <MediaTemplate EmbedCab="yes" />
 
     <Feature Id="ProductFeature" Title="Docify" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
