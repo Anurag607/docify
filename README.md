@@ -18,6 +18,6 @@ samples, guidance on mobile development, and a full API reference.
 MSI Install Commands:
 
 ```
-candle installer.wxs
+candle wix/installer.wxs
 light installer.wixobj -o YourAppName.msi
 ```
