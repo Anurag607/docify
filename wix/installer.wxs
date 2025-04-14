@@ -20,7 +20,7 @@
 
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="MainExecutable" Guid="ca0eca5f-6e3e-4b57-93b2-9535f2d82db6">
-        <File Source="build\windows\x64\runner\Release\docify_boxed.exe" />
+        <File Source="docify.exe" />
       </Component>
     </ComponentGroup>
   </Fragment>
